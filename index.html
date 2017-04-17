@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Chen's Blog">
+<meta property="og:url" content="http://neilq.github.io/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chen's Blog">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+        <p class="date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。
+体验：
+搭建简单，一次尝试即成功。
+分布式好伙伴
+
+技巧
+server意外掉线后重新上线，client将会自动重连，不需要自己处理。
+利用streamimg功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+        <p class="date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        工作中接到需求并着手开发时，我们通常会有两种选择，我将这两种方式分别称为追求短期效率与追求长期效率。
+短期效率我们假设这样一个场景，当你接到一个开发任务时，上司会交代：三天内必须完成，更有甚者：今天必须完成。可事实上，所有人都清楚，这个任务根本不可能在本周内完成。需求不明确，按照某某某的样子抄；这个地方逻辑可能会有特殊情况，先不管碰到再说；这部分代码很乱，可能性能还很差，不管了先这样。终于，在你吭
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+        <p class="date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        最近从MySql5.6升级到5.7版本，踩到一些坑，在此记录。
+sql_mode=ONLY_FULL_GROUP_BY项目中某些sql报错1234ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUPBY clause and contains nonaggregated column &amp;apos;mydb.t.addres
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+        <p class="date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        10月27日夜，我在溧阳准备第二天的科目二考试，刚吃过晚饭，和其他学员出去溜溜解解闷，谁知接到一个猎头的电话。
+“你好，我是xxx公司的猎头xxx，我这里有一个asp.net的工作岗位，不知您最近有考虑换工作吗？”说话的是一位略微带着粤语口音的女性，音调很是好听，不过我是不会受到魅惑的。
+“不好意思，最近应该不会换工作，最早可能也要年后才会考虑。”这是我最近面对hr的统一回复用语，假如过几个月还能
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+        <p class="date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        今晚回到家，家中正招待客人。其间父亲剥开柚子分给大家吃，然而大家一致觉得这柚太酸，汁也不多，唯一的优点是吃完不粘手，可谓是渣渣中的极品。脑海中的第一念头是不好吃就扔掉，这时代谁还在乎一柚子。却见大家仍然吃得很香，大概是父辈的人都很节约吧。
+但转而一想，有次我自己买了几个油桃，口味酸而转苦，还涩。奇怪的是，当时我并没有愤怒得扔掉，反而津津有味。想来平时我并不节约，不喜欢的东西说扔就扔，我为什么会吃下
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+        <p class="date"><time datetime="2016-09-19T15:09:07.000Z" itemprop="datePublished">9月 19 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/09/19/Be-a-bright-programmer/" class="title">做一个有灵性的程序员</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        从业到现在三年多，我的职业生涯可以算是比较顺利的，几乎没有大波折。当然，也有可能是因为当时扛过挫折之后，再回头看已经算不上什么了。
+刚毕业时找了一家小公司，沉淀技术。之后面试去了无锡某公司，这是一段令我印象深刻的经历。当时因为面试表现好，hr给我要求的薪资额外加了25%，然而一周后，因为无法适应技术支持岗位申请离职。出乎我意料的是，公司考虑到我这周的表现不错，立即把我调到开发岗。半年之后，由于压力
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"></p>
+        <p class="date"><time datetime="2016-09-04T05:47:44.000Z" itemprop="datePublished">9月 4 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/09/04/a-practise-of-gitlab-webhook/" class="title">记一次gitlab webhook使用实践</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        背景最近我们团队将git服务器全部迁移到gitlab上，出于某些考虑，我们将所有项目的master分支设为受保护状态，小组成员只能对dev或者其他分支推送代码。当需要发布版本时，都需要组长将代码合并到master，这样当频率一高，组长必然会不断得被打断工作，从而影响效率。
+刚开始时我想利用git alias或者批处理来解决这件时，然而细想，如果还是需要我来敲一行命令或者打开批处理，仍然没有解决问题
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+        <p class="date"><time datetime="2016-08-18T06:45:27.000Z" itemprop="datePublished">8月 18 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/08/18/mysql-child-parent-recursive/" class="title">MySql由child找parent</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        记录sql:
+123456SELECT s.*, @code :=(SELECT  ParentCode FROM mytableWHERE Code = @code) AS tmpFROM  (SELECT  @code := 10) varsSTRAIGHT_JOIN mytable sWHERE @code IS NOT NULL;
+
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+        <p class="date"><time datetime="2016-08-18T05:34:12.000Z" itemprop="datePublished">8月 18 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/" class="title">cs文件推送到git-server中文乱码问题</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        昨天碰到一个问题，某个cs文件push到git server后，里面的所有中文（包括注释和字符串）全都变成了乱码，猜测是编码问题导致，于是将其编码格式从’uft8’改成了’utf8-bom’，再push上去就正常了。BOM（Byte-Order Mark，字节序标记）是Unicode码点U+FEFF。详情参考典型乱码。
+至于怎么改编码格式，如果是用vscode，点击右下角编码格式信息就能切换。如果
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+    
+  <article class="article article-summary">
+    <div class="article-summary-inner">
+      <div class="article-meta">
+        <p class="category"></p>
+        <p class="date"><time datetime="2016-06-04T07:36:00.000Z" itemprop="datePublished">6月 4 2016</time></p>
+      </div>
+      <h2 class="article-title">
+        <a href="/2016/06/04/Linux_productive_tool_Tmux/" class="title">Linux命令行利器Tmux</a>
+      </h2>
+      <p class="article-excerpt">
+        
+        简介Tmux是一个优秀的终端复用软件，即使非正常掉线，也能保证当前的任务运行，这一点对于 远程SSH访问特别有用，网络不好的情况下仍然能保证工作现场不丢失!此外，tmux完全使用键盘 控制窗口，实现窗口的切换功能。
+安装1sudo apt-get install tmux
+安装完成后用“tmux”命令启动。
+配置在~/下建立”.tmuix.conf”文件1234567891011121314151
+      </p>
+    </div>
+  </article>
+
+ 
+
+  
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+    </nav>
+  
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

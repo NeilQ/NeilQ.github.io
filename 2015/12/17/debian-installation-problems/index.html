@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Debian 8安装可能会出现的问题 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="apt-get提示磁盘插入apt-get时会出现类似以下错误Media change: please insert the disc labeled  &amp;#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&amp;#39; in the drive &amp;#39;/media/cdrom/&amp;#39; a">
+<meta name="keywords" content="linux,debian">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Debian 8安装可能会出现的问题">
+<meta property="og:url" content="http://neilq.github.io/2015/12/17/debian-installation-problems/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="apt-get提示磁盘插入apt-get时会出现类似以下错误Media change: please insert the disc labeled  &amp;#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&amp;#39; in the drive &amp;#39;/media/cdrom/&amp;#39; a">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.231Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Debian 8安装可能会出现的问题">
+<meta name="twitter:description" content="apt-get提示磁盘插入apt-get时会出现类似以下错误Media change: please insert the disc labeled  &amp;#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&amp;#39; in the drive &amp;#39;/media/cdrom/&amp;#39; a">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-debian-installation-problems" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      Debian 8安装可能会出现的问题
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/12/17/debian-installation-problems/">
+    <time datetime="2015-12-17T07:29:17.000Z" itemprop="datePublished">12月 17 2015</time>
+  </a>
+</div>
+          
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <h2 id="apt-get提示磁盘插入"><a href="#apt-get提示磁盘插入" class="headerlink" title="apt-get提示磁盘插入"></a>apt-get提示磁盘插入</h2><p>apt-get时会出现类似以下错误<br><code>Media change: please insert the disc labeled
+ &#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&#39;
+in the drive &#39;/media/cdrom/&#39; and press enter</code></p>
+<p>解决方案：<br>修改文件 <code>sudo nano /etc/apt/sources.list</code>，将 <code>deb cdrom:</code>这一行注释掉，如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</div><div class="line"></div><div class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</div><div class="line"></div><div class="line">deb http://ftp.us.debian.org/debian/ wheezy main</div><div class="line">deb-src http://ftp.us.debian.org/debian/ wheezy main</div><div class="line"></div><div class="line">deb http://security.debian.org/ wheezy/updates main</div><div class="line">deb-src http://security.debian.org/ wheezy/updates main</div><div class="line"></div><div class="line"># wheezy-updates, previously known as &apos;volatile&apos;</div><div class="line">deb http://ftp.us.debian.org/debian/ wheezy-updates main</div><div class="line">deb-src http://ftp.us.debian.org/debian/ wheezy-updates main</div></pre></td></tr></table></figure></p>
+<h2 id="没有安装sudo"><a href="#没有安装sudo" class="headerlink" title="没有安装sudo"></a>没有安装sudo</h2><ol>
+<li>打开终端</li>
+<li>切换到root用户<ul>
+<li>执行 <code>su</code> 命令</li>
+<li>输入密码</li>
+</ul>
+</li>
+<li>安装sudo <ul>
+<li><code>apt-get install sudo</code></li>
+</ul>
+</li>
+<li>将用户添加到sudo group<ul>
+<li><code>adduser yourusername sudo</code></li>
+</ul>
+</li>
+<li>将用户名添加到 <strong>/etc/sudoers</strong> 文件<ul>
+<li>执行 <code>nano /etc/sudoers</code></li>
+<li>找到 <code>%sudo ALL=(ALL:ALL) ALL</code> 这一行</li>
+<li>在下面插入 <code>yourusername ALL=(ALL:ALL) ALL</code> (这句话好奇怪)</li>
+<li>保存</li>
+</ul>
+</li>
+<li>OK了</li>
+</ol>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/12/17/debian-installation-problems/" data-id="cj1ls6zq4000prksisk6xwocw" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/debian/">debian</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/17/my-vim-skills/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          我的vim黑科技
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/21/AOP-programming-with-Unity-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">利用Unity进行AOP编程: 拦截器实战（二)</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-debian-installation-problems" data-title="Debian 8安装可能会出现的问题" data-url="http://neilq.github.io/2015/12/17/debian-installation-problems/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

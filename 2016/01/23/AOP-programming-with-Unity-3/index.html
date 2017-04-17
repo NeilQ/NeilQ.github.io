@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用Unity进行AOP编程: 策略注入（三) | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言上一篇文章里，给大家介绍的利用Unity拦截进行编码实战，那么本编文章将给大家演示一些更高级灵活的使用。 策略注入首先我们先展示一段利用策略添加拦截行为的代码，然后我们再来分析。1234567891011121314151617181920212223242526272829303132container.RegisterType&amp;lt;ITenantStore, TenantStore&amp;gt">
+<meta name="keywords" content="AOP,Unity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Unity进行AOP编程: 策略注入（三)">
+<meta property="og:url" content="http://neilq.github.io/2016/01/23/AOP-programming-with-Unity-3/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="前言上一篇文章里，给大家介绍的利用Unity拦截进行编码实战，那么本编文章将给大家演示一些更高级灵活的使用。 策略注入首先我们先展示一段利用策略添加拦截行为的代码，然后我们再来分析。1234567891011121314151617181920212223242526272829303132container.RegisterType&amp;lt;ITenantStore, TenantStore&amp;gt">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.227Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用Unity进行AOP编程: 策略注入（三)">
+<meta name="twitter:description" content="前言上一篇文章里，给大家介绍的利用Unity拦截进行编码实战，那么本编文章将给大家演示一些更高级灵活的使用。 策略注入首先我们先展示一段利用策略添加拦截行为的代码，然后我们再来分析。1234567891011121314151617181920212223242526272829303132container.RegisterType&amp;lt;ITenantStore, TenantStore&amp;gt">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-AOP-programming-with-Unity-3" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      利用Unity进行AOP编程: 策略注入（三)
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2016/01/23/AOP-programming-with-Unity-3/">
+    <time datetime="2016-01-23T08:09:17.000Z" itemprop="datePublished">1月 23 2016</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="http://neilq.github.io/2015/12/21/AOP-programming-with-Unity-2/">上一篇文章里</a>，给大家介绍的利用Unity拦截进行编码实战，那么本编文章将给大家演示一些更高级灵活的使用。</p>
+<h1 id="策略注入"><a href="#策略注入" class="headerlink" title="策略注入"></a>策略注入</h1><p>首先我们先展示一段利用策略添加拦截行为的代码，然后我们再来分析。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">container.RegisterType&lt;ITenantStore, TenantStore&gt;(</div><div class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;PolicyInjectionBehavior&gt;(),</div><div class="line">  <span class="keyword">new</span> Interceptor&lt;InterfaceInterceptor&gt;());</div><div class="line"></div><div class="line">container.RegisterType&lt;ISurveyStore, SurveyStore&gt;(</div><div class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;PolicyInjectionBehavior&gt;(),</div><div class="line">  <span class="keyword">new</span> Interceptor&lt;InterfaceInterceptor&gt;());</div><div class="line"></div><div class="line"><span class="keyword">var</span> first = <span class="keyword">new</span> InjectionProperty(<span class="string">"Order"</span>, <span class="number">1</span>);</div><div class="line"><span class="keyword">var</span> second = <span class="keyword">new</span> InjectionProperty(<span class="string">"Order"</span>, <span class="number">2</span>);</div><div class="line"></div><div class="line">container.Configure&lt;Interception&gt;()</div><div class="line">  .AddPolicy(<span class="string">"logging"</span>)</div><div class="line">  .AddMatchingRule&lt;AssemblyMatchingRule&gt;(</div><div class="line">    <span class="keyword">new</span> InjectionConstructor(</div><div class="line">    <span class="keyword">new</span> InjectionParameter(<span class="string">"Tailspin.Web.Survey.Shared"</span>)))</div><div class="line">  .AddCallHandler&lt;LoggingCallHandler&gt;(</div><div class="line">    <span class="keyword">new</span> ContainerControlledLifetimeManager(),</div><div class="line">    <span class="keyword">new</span> InjectionConstructor(),</div><div class="line">    first);</div><div class="line"></div><div class="line">container.Configure&lt;Interception&gt;()</div><div class="line">  .AddPolicy(<span class="string">"caching"</span>)</div><div class="line">  .AddMatchingRule&lt;MemberNameMatchingRule&gt;(</div><div class="line">    <span class="keyword">new</span> InjectionConstructor(<span class="keyword">new</span> [] &#123;<span class="string">"Get*"</span>, <span class="string">"Save*"</span>&#125;, <span class="literal">true</span>))</div><div class="line">  .AddMatchingRule&lt;NamespaceMatchingRule&gt;(</div><div class="line">    <span class="keyword">new</span> InjectionConstructor(</div><div class="line">      <span class="string">"Tailspin.Web.Survey.Shared.Stores"</span>, <span class="literal">true</span>))</div><div class="line">  .AddCallHandler&lt;CachingCallHandler&gt;(</div><div class="line">    <span class="keyword">new</span> ContainerControlledLifetimeManager(),</div><div class="line">    <span class="keyword">new</span> InjectionConstructor(),</div><div class="line">    second);</div></pre></td></tr></table></figure></p>
+<p>我们可以看到示例中通过<strong>PolicyInjectionBehavior</strong>类型来注册了两个Sotre类。这种行为利用了策略定义的方式，将处理类插入到应用程序管道中，这两个处理类分别是<strong>LoggingCallHandler</strong>和<strong>CachingCallHandler</strong>,每种策略都有一个名称作唯一标识，以及有一到两个的匹配规则来定义何时得以应用。</p>
+<p>这种策略注入程序块包含的内置匹配规则有：</p>
+<ul>
+<li>Assembly名称</li>
+<li>命名空间</li>
+<li>类型</li>
+<li>Tag特性 </li>
+<li>自定义特性</li>
+<li>成员名称</li>
+<li>方法签名</li>
+<li>参数类型</li>
+<li>属性</li>
+<li>返回类型<br>当然，我们仍然可以自定义匹配规则。这里我们不作详细描述，有兴趣的朋友请自行研究。</li>
+</ul>
+<p>我们来看上述代码的缓存策略，它使用了两种并集匹配规则：当满足方法名以<strong>Get</strong>或者<strong>Save</strong>(<strong>true</strong>参数表示它不忽略大小写)，并且所调用的对象在<strong>Tailspin.Web.Survey.Shared.Stores</strong>命名空间时，缓存处理类将被触发。<br><strong>first</strong>和<strong>second</strong>参数用来控制容器对同一个满足规则的实例调用处理类的顺序，在示例中，容器将首先调用logging handler以确保日志不丢失。</p>
+<p>需要注意的是，这两个策略都使用<strong>ContainerControlledLifetimeManager</strong>类型来确保处理类是单例。</p>
+<p>接下来我们展示两个处理类的具体实现：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> <span class="title">LoggingCallHandler</span> : <span class="title">ICallHandler</span></div><div class="line">&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> IMethodReturn <span class="title">Invoke</span>(<span class="params">IMethodInvocation input,</span></span></div><div class="line">    GetNextHandlerDelegate getNext)</div><div class="line">  &#123;</div><div class="line">    <span class="comment">// Before invoking the method on the original target</span></div><div class="line">    WriteLog(String.Format(<span class="string">"Invoking method &#123;0&#125; at &#123;1&#125;"</span>,</div><div class="line">      input.MethodBase, DateTime.Now.ToLongTimeString()));</div><div class="line"></div><div class="line">    <span class="comment">// Invoke the next handler in the chain</span></div><div class="line">    <span class="keyword">var</span> result = getNext().Invoke(input, getNext);</div><div class="line"></div><div class="line">    <span class="comment">// After invoking the method on the original target</span></div><div class="line">    <span class="keyword">if</span> (result.Exception != <span class="literal">null</span>)</div><div class="line">    &#123;</div><div class="line">      WriteLog(String.Format(<span class="string">"Method &#123;0&#125; threw exception &#123;1&#125; at &#123;2&#125;"</span>,</div><div class="line">        input.MethodBase, result.Exception.Message,</div><div class="line">        DateTime.Now.ToLongTimeString()));</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">else</span></div><div class="line">    &#123;</div><div class="line">      WriteLog(String.Format(<span class="string">"Method &#123;0&#125; returned &#123;1&#125; at &#123;2&#125;"</span>,</div><div class="line">        input.MethodBase, result.ReturnValue,</div><div class="line">        DateTime.Now.ToLongTimeString()));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">public</span> <span class="keyword">int</span> Order</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">get</span>;</div><div class="line">    <span class="keyword">set</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">WriteLog</span>(<span class="params"><span class="keyword">string</span> message</span>)</span></div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CachingCallHandler</span> :<span class="title">ICallHandler</span></div><div class="line"></div><div class="line">&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> IMethodReturn <span class="title">Invoke</span>(<span class="params">IMethodInvocation input,</span></span></div><div class="line">    GetNextHandlerDelegate getNext)</div><div class="line">  &#123;</div><div class="line">    <span class="comment">//Before invoking the method on the original target</span></div><div class="line">    <span class="keyword">if</span> (input.MethodBase.Name == <span class="string">"GetTenant"</span>)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">var</span> tenantName = input.Arguments[<span class="string">"tenant"</span>].ToString();</div><div class="line">      <span class="keyword">if</span> (IsInCache(tenantName))</div><div class="line">      &#123;</div><div class="line">        <span class="keyword">return</span> input.CreateMethodReturn(FetchFromCache(tenantName));</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    IMethodReturn result = getNext()(input, getNext);</div><div class="line"></div><div class="line">    <span class="comment">//After invoking the method on the original target</span></div><div class="line">    <span class="keyword">if</span> (input.MethodBase.Name == <span class="string">"SaveTenant"</span>)</div><div class="line">    &#123;</div><div class="line">      AddToCache(input.Arguments[<span class="string">"tenant"</span>]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> result;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">public</span> <span class="keyword">int</span> Order</div><div class="line">  &#123;</div><div class="line">    <span class="keyword">get</span>;</div><div class="line">    <span class="keyword">set</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">bool</span> <span class="title">IsInCache</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">object</span> <span class="title">FetchFromCache</span>(<span class="params"><span class="keyword">string</span> key</span>)</span></div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">AddToCache</span>(<span class="params"><span class="keyword">object</span> item</span>)</span></div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在多数情况下，策略注入处理类可能比上篇文章中的拦截行为类更容易定位到横切面。这是因为我们可以利用策略规则来控制容器是否调用处理类，而不用像拦截行为类那样注入到每个符合需求的类型。</p>
+<h1 id="策略注入和特性"><a href="#策略注入和特性" class="headerlink" title="策略注入和特性"></a>策略注入和特性</h1><p>利用策略匹配规则意味着我们可以直接在容器中全局管理策略，我们可以将错略定义在容器代码中或者配置文件中。</p>
+<p>然而，我们还有另一种方式，利用特性在业务代码中标识是否需要容器调用处理类。在这种情况下，写业务类的码猴需要确保所有的横切关系都被正确定位到。</p>
+<p>我们展示一下代码：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">container.RegisterType&lt;ITenantStore, TenantStore&gt;(</div><div class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;PolicyInjectionBehavior&gt;(),</div><div class="line">  <span class="keyword">new</span> Interceptor&lt;InterfaceInterceptor&gt;());</div><div class="line"></div><div class="line">container.RegisterType&lt;ISurveyStore, SurveyStore&gt;(</div><div class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;PolicyInjectionBehavior&gt;(),</div><div class="line">  <span class="keyword">new</span> Interceptor&lt;InterfaceInterceptor&gt;());</div></pre></td></tr></table></figure></p>
+<p>当我们利用特性时，就不需要配置策略了，而只要定义相应的特性，以下代码展示了日志特性。缓存特性几乎是与之一样的，因此不再展示。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> Microsoft.Practices.Unity;</div><div class="line"><span class="keyword">using</span> Microsoft.Practices.Unity.InterceptionExtension;</div><div class="line"></div><div class="line"><span class="keyword">class</span> <span class="title">LoggingCallHandlerAttribute</span> : <span class="title">HandlerAttribute</span></div><div class="line">&#123;</div><div class="line">  <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> order;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="title">LoggingCallHandlerAttribute</span>(<span class="params"><span class="keyword">int</span> order</span>)</span></div><div class="line">  &#123;</div><div class="line">    <span class="keyword">this</span>.order = order;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> ICallHandler <span class="title">CreateHandler</span>(<span class="params">IUnityContainer container</span>)</span></div><div class="line">  &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> LoggingCallHandler() &#123; Order = order &#125;;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>CreateHandler</strong>方法创建了一个<strong>LoggingCallHandler</strong>实例，并设置了调用顺序。然后我们就能用这个特性来装饰我们的业务类了。<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">class MyTenantStoreWithAttributes : ITenantStore, ITenantLogoStore</div><div class="line">&#123;</div><div class="line">  ...</div><div class="line"></div><div class="line">  [LoggingCallHandler(1)]</div><div class="line">  public void Initialize()</div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  [LoggingCallHandler(1)]</div><div class="line">  [CachingCallHandler(2)]</div><div class="line">  public Tenant GetTenant(string tenant)</div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  [LoggingCallHandler(1)]</div><div class="line">  public IEnumerable&lt;string&gt; GetTenantNames()</div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  [LoggingCallHandler(1)]</div><div class="line">  [CachingCallHandler(2)]</div><div class="line">  public void SaveTenant(Tenant tenant)</div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  [LoggingCallHandler(1)]</div><div class="line">  public virtual void UploadLogo(string tenant, byte[] logo)</div><div class="line">  &#123;</div><div class="line">    ...</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这篇文章向大家介绍了如何利用策略规则和特性来灵活得进行切面拦截，系列到这里已经结束了，但其中仍有很多细节值得研究，如有机会希望和大家一起交流。</p>
+<p>这是我第一个完整的系列博客，最初打算写依赖注入系列的文章，但考虑到这一技术在国内已经较为普遍，中文资料也较多，因此跳过，直接介绍Unity的拦截器。在这之后，如有时间，我将向大家介绍单元测试中的moq技术，其实这在国外也是非常普遍的技术，奈何国内软件开发从来就不重视测试，借此吐槽。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2016/01/23/AOP-programming-with-Unity-3/" data-id="cj1ls6zp70007rksish1o8j22" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AOP/">AOP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/">Unity</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/13/custom-return-fields-of-web-api-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          web api 自定义返回对象的字段
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/04/16/reading-other-people-s-codes/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">知之不如好之：为什么要阅读开源代码</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-AOP-programming-with-Unity-3" data-title="利用Unity进行AOP编程: 策略注入（三)" data-url="http://neilq.github.io/2016/01/23/AOP-programming-with-Unity-3/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

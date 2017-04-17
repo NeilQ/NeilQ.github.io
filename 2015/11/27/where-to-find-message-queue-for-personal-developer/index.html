@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>个人开发者如何巧用消息队列 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
+<meta name="keywords">
+<meta property="og:type" content="article">
+<meta property="og:title" content="个人开发者如何巧用消息队列">
+<meta property="og:url" content="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
+<meta property="og:image" content="http://neilq.github.io/img/mq-example1.png">
+<meta property="og:image" content="http://neilq.github.io/img/mq-example2.png">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.241Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="个人开发者如何巧用消息队列">
+<meta name="twitter:description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
+<meta name="twitter:image" content="http://neilq.github.io/img/mq-example1.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-where-to-find-message-queue-for-personal-developer" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      个人开发者如何巧用消息队列
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/11/27/where-to-find-message-queue-for-personal-developer/">
+    <time datetime="2015-11-27T08:42:10.000Z" itemprop="datePublished">11月 27 2015</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。</p>
+<p>今天我就介绍两种方案，寻找身边的资源做消息队列。</p>
+<h3 id="云盘"><a href="#云盘" class="headerlink" title="云盘"></a>云盘</h3><p>前段时间我在利用dropbox在多台电脑上共享游戏存档时，发现其具有跨平台、实时、分布式等特点，脑中一个哆嗦，这明明是一个分布式消息分发系统！我们可以将不同文件夹作为隔离的各个消息通道，发布者通过在文件夹中写入文件来传递消息，而订阅者则监控其所在pc上相应的文件夹文件变动，就能准确及时得获得消息。可以说既支持消息队列，还是一个订阅\发布者模式。</p>
+<p>对此我写了个ip同步工具，可以将远程pc的公网ip实时同步到dropbox文件夹。github地址：<a href="https://github.com/NeilQ/ip-sync" target="_blank" rel="external">ip-sync</a><br><img src="/img/mq-example1.png" alt="mq-example1"></p>
+<p>那么关于云盘的选择，在国内环境下，我主推快盘、坚果云，这两者都是支持跨平台的。如果只需要windows支持，那选择就丰富了，不一一列举。</p>
+<h3 id="微博api"><a href="#微博api" class="headerlink" title="微博api"></a>微博api</h3><p>这个点子源于github发现的一个<a href="https://github.com/taizilongxu/weibo_robot" target="_blank" rel="external">有趣的项目</a>，用新浪微博api实现与远端电脑交互。发布者用某个微博账号发布一条微博作为消息，而订阅者则通过监控微博动态获取消息，并将处理结果反馈写入评论，俨然是一个单通道消息队列。<br><img src="/img/mq-example2.png" alt="mq-example2"></p>
+<p>使用这种方法只需要注册一个微博开发者账号，但由于其有1小时1000次的ip限制，实时性会差一点，并且有字数限制。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/" data-id="cj1ls6zsj0032rksi89obg1ws" class="article-share-link">分享到</a>
+        
+        
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/24/route-definition-of-restful-api/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Restful api url设计建议
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/17/my-vim-skills/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">我的vim黑科技</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-where-to-find-message-queue-for-personal-developer" data-title="个人开发者如何巧用消息队列" data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

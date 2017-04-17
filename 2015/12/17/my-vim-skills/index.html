@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我的vim黑科技 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="用以记录我的vim技巧。 回到屏幕中间NORMAL模式下按zz，可以使当前光标所在行处于屏幕中间。 ctrl-o, zz在INSERT模式下，按ctrl-o将会回到NORMAL模式，此时将可以执行一次NORMAL命令，执行完毕后回到INSERT模式，可与zz配合使用 将外部命令执行结果放到当前文本中来试试1:.!ls 1:.!dir 执行python代码在任何格式的文本中，想插入一些数据，只需写一">
+<meta name="keywords" content="vim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我的vim黑科技">
+<meta property="og:url" content="http://neilq.github.io/2015/12/17/my-vim-skills/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="用以记录我的vim技巧。 回到屏幕中间NORMAL模式下按zz，可以使当前光标所在行处于屏幕中间。 ctrl-o, zz在INSERT模式下，按ctrl-o将会回到NORMAL模式，此时将可以执行一次NORMAL命令，执行完毕后回到INSERT模式，可与zz配合使用 将外部命令执行结果放到当前文本中来试试1:.!ls 1:.!dir 执行python代码在任何格式的文本中，想插入一些数据，只需写一">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.235Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我的vim黑科技">
+<meta name="twitter:description" content="用以记录我的vim技巧。 回到屏幕中间NORMAL模式下按zz，可以使当前光标所在行处于屏幕中间。 ctrl-o, zz在INSERT模式下，按ctrl-o将会回到NORMAL模式，此时将可以执行一次NORMAL命令，执行完毕后回到INSERT模式，可与zz配合使用 将外部命令执行结果放到当前文本中来试试1:.!ls 1:.!dir 执行python代码在任何格式的文本中，想插入一些数据，只需写一">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-my-vim-skills" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      我的vim黑科技
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/12/17/my-vim-skills/">
+    <time datetime="2015-12-17T05:58:16.000Z" itemprop="datePublished">12月 17 2015</time>
+  </a>
+</div>
+          
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>用以记录我的vim技巧。</p>
+<h3 id="回到屏幕中间"><a href="#回到屏幕中间" class="headerlink" title="回到屏幕中间"></a>回到屏幕中间</h3><p>NORMAL模式下按zz，可以使当前光标所在行处于屏幕中间。</p>
+<h3 id="ctrl-o-zz"><a href="#ctrl-o-zz" class="headerlink" title="ctrl-o, zz"></a>ctrl-o, zz</h3><p>在INSERT模式下，按ctrl-o将会回到NORMAL模式，此时将可以执行一次NORMAL命令，执行完毕后回到INSERT模式，可与zz配合使用</p>
+<h3 id="将外部命令执行结果放到当前文本中来"><a href="#将外部命令执行结果放到当前文本中来" class="headerlink" title="将外部命令执行结果放到当前文本中来"></a>将外部命令执行结果放到当前文本中来</h3><p>试试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:.!ls</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:.!dir</div></pre></td></tr></table></figure>
+<h3 id="执行python代码"><a href="#执行python代码" class="headerlink" title="执行python代码"></a>执行python代码</h3><p>在任何格式的文本中，想插入一些数据，只需写一小段python代码，然后v选中这段代码，输入“!python”,这段代码的执行结果就被插入在了这段代码所在的位置。</p>
+<h3 id="dib"><a href="#dib" class="headerlink" title="dib"></a>dib</h3><p>删除一对小括号里面的内容</p>
+<h3 id="p"><a href="#p" class="headerlink" title="]p"></a>]p</h3><p>调整缩进粘贴</p>
+<h3 id="浏览之前的打开过的文件目录"><a href="#浏览之前的打开过的文件目录" class="headerlink" title="浏览之前的打开过的文件目录"></a>浏览之前的打开过的文件目录</h3><p>:bro ol (browser old)</p>
+<h3 id="Align-插件"><a href="#Align-插件" class="headerlink" title="Align 插件"></a>Align 插件</h3><p>选中文本后，执行“:Align”+符号，可将文本按照该符号对其，如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a = 1</div><div class="line">var foo = 2</div><div class="line">var foobar = 3</div></pre></td></tr></table></figure></p>
+<p>选中后输入”:Align=“ + ENTER, 结果将变为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">var a      = 1</div><div class="line">var foo    = 2</div><div class="line">var foobar = 3</div></pre></td></tr></table></figure></p>
+<h3 id="INSERT模式下的光标移动"><a href="#INSERT模式下的光标移动" class="headerlink" title="INSERT模式下的光标移动"></a>INSERT模式下的光标移动</h3><p>.vimc中加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&quot; Ctrl + K 插入模式下光标向上移动</div><div class="line">imap &lt;c-k&gt; &lt;Up&gt;</div><div class="line"></div><div class="line">&quot; Ctrl + J 插入模式下光标向下移动</div><div class="line">imap &lt;c-j&gt; &lt;Down&gt;</div><div class="line"></div><div class="line">&quot; Ctrl + H 插入模式下光标向左移动</div><div class="line">imap &lt;c-h&gt; &lt;Left&gt;</div><div class="line"></div><div class="line">&quot; Ctrl + L 插入模式下光标向右移动</div><div class="line">imap &lt;c-l&gt; &lt;Right&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="ESC替代键"><a href="#ESC替代键" class="headerlink" title="ESC替代键"></a>ESC替代键</h3><p>如果你嫌ESC距离手指太远，可以选择其他替代键<br>ctrl+[ 与esc功能相同<br>ctrl+c 与esc功能相同</p>
+<p>或者自定义配置键盘映射，如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:imap jj &lt;ESC&gt;</div></pre></td></tr></table></figure></p>
+<p>将jj映射为ESC键，但必须快速按下.</p>
+<h3 id="修改文件保存类型"><a href="#修改文件保存类型" class="headerlink" title="修改文件保存类型"></a>修改文件保存类型</h3><p>使用unix文件格式重新保存<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:w ++ff=unix</div></pre></td></tr></table></figure></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/12/17/my-vim-skills/" data-id="cj1ls6zrc001qrksi359n9btz" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vim/">vim</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2015/11/27/where-to-find-message-queue-for-personal-developer/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          个人开发者如何巧用消息队列
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/17/debian-installation-problems/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Debian 8安装可能会出现的问题</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-my-vim-skills" data-title="我的vim黑科技" data-url="http://neilq.github.io/2015/12/17/my-vim-skills/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

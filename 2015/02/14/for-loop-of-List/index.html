@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>.NET性能之遍历List&lt;T&gt; | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近对.NET项目进行性能优化，在开启编译器优化的前提下，对List对象遍历的不同方式进行了简单的研究和对比，以此记录。首先我们创建两个不同类型的List对象，各自塞了5000000个简单元素：1234567var listInt = new List&amp;lt;int&amp;gt;();var listString = new List&amp;lt;String&amp;gt;();for (var i = 0; i">
+<meta name="keywords">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".NET性能之遍历List<T>">
+<meta property="og:url" content="http://neilq.github.io/2015/02/14/for-loop-of-List/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="最近对.NET项目进行性能优化，在开启编译器优化的前提下，对List对象遍历的不同方式进行了简单的研究和对比，以此记录。首先我们创建两个不同类型的List对象，各自塞了5000000个简单元素：1234567var listInt = new List&amp;lt;int&amp;gt;();var listString = new List&amp;lt;String&amp;gt;();for (var i = 0; i">
+<meta property="og:image" content="http://neilq.github.io/img/foreach.png">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.232Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content=".NET性能之遍历List<T>">
+<meta name="twitter:description" content="最近对.NET项目进行性能优化，在开启编译器优化的前提下，对List对象遍历的不同方式进行了简单的研究和对比，以此记录。首先我们创建两个不同类型的List对象，各自塞了5000000个简单元素：1234567var listInt = new List&amp;lt;int&amp;gt;();var listString = new List&amp;lt;String&amp;gt;();for (var i = 0; i">
+<meta name="twitter:image" content="http://neilq.github.io/img/foreach.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-for-loop-of-List" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      .NET性能之遍历List&lt;T&gt;
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/02/14/for-loop-of-List/">
+    <time datetime="2015-02-14T09:15:15.000Z" itemprop="datePublished">2月 14 2015</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>最近对.NET项目进行性能优化，在开启编译器优化的前提下，对List<t>对象遍历的不同方式进行了简单的研究和对比，以此记录。<br>首先我们创建两个不同类型的List对象，各自塞了5000000个简单元素：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> listInt = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;();</div><div class="line"><span class="keyword">var</span> listString = <span class="keyword">new</span> List&lt;String&gt;();</div><div class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5000000</span>; i++)</div><div class="line">&#123;</div><div class="line">	listInt.Add(<span class="number">1</span>);</div><div class="line">	listString.Add(<span class="string">"1"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></t></p>
+<p>在此我们分别通过foreach, for-loop, 和List<t>.ForEach方法对他们分别进行遍历:<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">CodeTimer.Time(<span class="string">"foreach int"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> listInt)</div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">CodeTimer.Time(<span class="string">"List.Foreach int"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    listInt.ForEach(s =&gt;</div><div class="line">    &#123;</div><div class="line">    &#125;);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">CodeTimer.Time(<span class="string">"for loop int"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; listInt.Count; i++)</div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">CodeTimer.Time(<span class="string">"foreach string"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> listString)</div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">CodeTimer.Time(<span class="string">"List.Foreach string"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    listString.ForEach(s =&gt;</div><div class="line">    &#123;</div><div class="line">    &#125;);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">CodeTimer.Time(<span class="string">"for loop string"</span>, <span class="number">10</span>, () =&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; listString.Count; i++)</div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></t></p>
+<p>运行结果如图：<br><img src="/img/foreach.png" alt="foreach"></p>
+<p>从结果中很容易得出<strong>结论</strong>，三种遍历，无论是对值类型还是引用类型，都是for-loop更高效。</p>
+<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>至于原因，我们先来看看List<t>对foreach迭代的实现：</t></p>
+<blockquote>
+<ul>
+<li>调用GetEnumerator并在托管堆上创建一个Enumerator实例，将会引起垃圾回收。</li>
+<li>每次迭代时调用Enimerator的MoveNext方法</li>
+<li>每次迭代时给Current成员赋值</li>
+</ul>
+</blockquote>
+<p>接着我们看看List<t>.ForEach的源码：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ForEach</span>(<span class="params">Action&lt;T&gt; action</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span>( action == <span class="literal">null</span>) &#123;</div><div class="line">        ThrowHelper.ThrowArgumentNullException(ExceptionArgument.match);</div><div class="line">    &#125;</div><div class="line">    Contract.EndContractBlock();</div><div class="line"></div><div class="line">    <span class="keyword">int</span> version = _version;</div><div class="line"></div><div class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span> ; i &lt; _size; i++) &#123;</div><div class="line">        <span class="keyword">if</span> (version != _version &amp;&amp; BinaryCompatibility.TargetsAtLeast_Desktop_V4_5) &#123;</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        action(_items[i]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (version != _version &amp;&amp; BinaryCompatibility.TargetsAtLeast_Desktop_V4_5)</div><div class="line">        ThrowHelper.ThrowInvalidOperationException(ExceptionResource.InvalidOperation_EnumFailedVersion);</div><div class="line">&#125;</div></pre></td></tr></table></figure></t></p>
+<p>不难发现ForEach方法也是对for-loop的封装，只不过每次都要执行一次Action委托，比for-loop慢是肯定的。</p>
+<p>最后，如果大家追求性能的话，建议尽量使用for-loop对List<t>遍历。</t></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/02/14/for-loop-of-List/" data-id="cj1ls6zqt0017rksiyj7z4qvm" class="article-share-link">分享到</a>
+        
+        
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2014/12/15/review-my-graduate-design/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          闲言碎语--回顾毕业设计
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/04/08/python-web-framework-selection/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Python Web框架选择小记</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-for-loop-of-List" data-title=".NET性能之遍历List&lt;T&gt;" data-url="http://neilq.github.io/2015/02/14/for-loop-of-List/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

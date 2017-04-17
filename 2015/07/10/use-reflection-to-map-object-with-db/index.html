@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用反射映射数据库对象 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="12345678910111213141516171819202122232425262728public IEnumerable&amp;lt;User&amp;gt; GetUsers()&amp;#123;    var conn = &quot;&quot;;    using (var sqlConnection = new SqlConnection(conn))    &amp;#123;        using (var comm">
+<meta name="keywords" content=".NET,C#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用反射映射数据库对象">
+<meta property="og:url" content="http://neilq.github.io/2015/07/10/use-reflection-to-map-object-with-db/index.html">
+<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="12345678910111213141516171819202122232425262728public IEnumerable&amp;lt;User&amp;gt; GetUsers()&amp;#123;    var conn = &quot;&quot;;    using (var sqlConnection = new SqlConnection(conn))    &amp;#123;        using (var comm">
+<meta property="og:updated_time" content="2017-04-17T06:42:21.240Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用反射映射数据库对象">
+<meta name="twitter:description" content="12345678910111213141516171819202122232425262728public IEnumerable&amp;lt;User&amp;gt; GetUsers()&amp;#123;    var conn = &quot;&quot;;    using (var sqlConnection = new SqlConnection(conn))    &amp;#123;        using (var comm">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+</head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/profile">简历</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+        <td><a class="main-nav-link" href="/profile">简历</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        39
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-use-reflection-to-map-object-with-db" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      利用反射映射数据库对象
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/07/10/use-reflection-to-map-object-with-db/">
+    <time datetime="2015-07-10T07:56:17.000Z" itemprop="datePublished">7月 10 2015</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> IEnumerable&lt;User&gt; <span class="title">GetUsers</span>(<span class="params"></span>)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">var</span> conn = <span class="string">""</span>;</div><div class="line">    <span class="keyword">using</span> (<span class="keyword">var</span> sqlConnection = <span class="keyword">new</span> SqlConnection(conn))</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> command = sqlConnection.CreateCommand())</div><div class="line">        &#123;</div><div class="line">            command.CommandText = <span class="string">"select * from users"</span>;</div><div class="line">            sqlConnection.Open();</div><div class="line">            <span class="keyword">using</span> (<span class="keyword">var</span> reader = command.ExecuteReader())</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">if</span> (!reader.HasRows) <span class="keyword">yield</span> <span class="keyword">break</span>;</div><div class="line"></div><div class="line">                <span class="keyword">while</span> (reader.Read())</div><div class="line">                &#123;</div><div class="line">                    <span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> User</div><div class="line">                    &#123;</div><div class="line">                        Id = reader.GetInt32(reader.GetOrdinal(<span class="string">"Id"</span>)),</div><div class="line">                        Name = reader.GetString(reader.GetOrdinal(<span class="string">"Name"</span>)),</div><div class="line">                        Phone = reader.GetString(reader.GetOrdinal(<span class="string">"Phone"</span>)),</div><div class="line">                        GroupId = reader.GetInt32(reader.GetOrdinal(<span class="string">"GroupId"</span>)),</div><div class="line">                        Nick = reader.GetString(reader.GetOrdinal(<span class="string">"Nick"</span>))</div><div class="line">                    &#125;;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上这段代码大家一定不陌生，当我们用Ado.net写数据层时，都会写上无数遍，无趣、麻烦、枯燥。当然，我们可以用一些代码生成工具来完成这个任务。但我们也可以优雅地把它做好。<br>这里介绍一种方法，利用反射机制遍历实体属性，并将数据库字段映射到实体中。Show you the code.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">public static T MapEntity&lt;T&gt;(SqlDataReader reader) where T : class, new()</div><div class="line">&#123;</div><div class="line">    var props = typeof(T).GetProperties();</div><div class="line">    var entity = new T();</div><div class="line">    foreach (var prop in props.Where(prop =&gt; prop.CanWrite))</div><div class="line">    &#123;</div><div class="line">        try</div><div class="line">        &#123;</div><div class="line">            var index = reader.GetOrdinal(prop.Name);</div><div class="line">            var data = reader.GetValue(index);</div><div class="line">            if (data != DBNull.Value)</div><div class="line">            &#123;</div><div class="line">                prop.SetValue(entity, Convert.ChangeType(data, prop.PropertyType), null);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        catch (IndexOutOfRangeException)</div><div class="line">        &#123;</div><div class="line">            continue;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    return entity;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如此这般，我们只要一行代码就能完成实体映射：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">yield</span> <span class="keyword">return</span> MapEntity&lt;User&gt;(reader);</div><div class="line"></div><div class="line"><span class="comment">//yield return new User</span></div><div class="line"><span class="comment">//&#123;</span></div><div class="line"><span class="comment">//    Id = reader.GetInt32(reader.GetOrdinal("Id")),</span></div><div class="line"><span class="comment">//    Name = reader.GetString(reader.GetOrdinal("Name")),</span></div><div class="line"><span class="comment">//    Phone = reader.GetString(reader.GetOrdinal("Phone")),</span></div><div class="line"><span class="comment">//    GroupId = reader.GetInt32(reader.GetOrdinal("GroupId")),</span></div><div class="line"><span class="comment">//    Nick = reader.GetString(reader.GetOrdinal("Nick"))</span></div><div class="line"><span class="comment">//&#125;;</span></div></pre></td></tr></table></figure></p>
+<p>引申一下，既然查询可以通过反射映射实体，那插入、更新、删除同理也是可以，这样开发中我们就可以这样写代码：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> user = SqlHelper.Query&lt;User&gt;(<span class="string">"select top 1 * from users"</span>);</div><div class="line">SqlHelper.Insert&lt;User&gt;(user);</div><div class="line">SqlHelper.Update&lt;User&gt;(user);</div><div class="line">SqlHelper.Delete&lt;User&gt;(user);</div></pre></td></tr></table></figure></p>
+<p>这是什么？Yes, ORM! 其实这就是.NET ORM的核心原理。</p>
+<p>这里推荐两个轻量级ORM: dapper, PetaPoco。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/07/10/use-reflection-to-map-object-with-db/" data-id="cj1ls6zsh002zrksiwb9sv8sa" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET/">.NET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C#</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2015/07/07/how-to-run-test-without-vs/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          如何让测试脱离vs跑自动化测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/07/17/web-api-2-custom-help-page-response-type/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">web api 2 - 自定义help page的返回类型</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-use-reflection-to-map-object-with-db" data-title="利用反射映射数据库对象" data-url="http://neilq.github.io/2015/07/10/use-reflection-to-map-object-with-db/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
+              <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" class="title">开发之短期效率与长期效率</a></p>
+              <p class="item-date"><time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" class="title">mysql5.6 升级到 mysql5.7遇到的问题</a></p>
+              <p class="item-date"><time datetime="2016-11-18T07:41:11.000Z" itemprop="datePublished">11月 18 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/30/An-interview-experience/" class="title">一次面试风波</a></p>
+              <p class="item-date"><time datetime="2016-10-29T17:40:08.000Z" itemprop="datePublished">10月 30 2016</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
+              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 10px;">docker</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/自动化测试/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/表值参数/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"neilq"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
