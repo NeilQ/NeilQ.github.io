@@ -5,17 +5,17 @@
   
   <title>GRPC琐碎 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streamimg功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
+  <meta name="description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streaming功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
 <meta name="keywords">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GRPC琐碎">
 <meta property="og:url" content="http://neilq.github.io/2017/04/17/fragments-of-grpc/index.html">
 <meta property="og:site_name" content="Chen's Blog">
-<meta property="og:description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streamimg功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
-<meta property="og:updated_time" content="2017-04-19T09:27:37.419Z">
+<meta property="og:description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streaming功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
+<meta property="og:updated_time" content="2017-04-28T02:03:04.582Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GRPC琐碎">
-<meta name="twitter:description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streamimg功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
+<meta name="twitter:description" content="记录一些grpc使用过程中的体验、坑及技巧，Server及Client语言都为C#。 体验： 搭建简单，一次尝试即成功。 分布式好伙伴  技巧 server意外掉线后重新上线，client将会自动重连，不需要自己处理。 利用streaming功能，可快速实现推送服务器，即观察者模式。之前有做过利用rabbitmq消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂">
   
   
     <link rel="icon" href="/favicon.png">
@@ -103,7 +103,7 @@ var _hmt = _hmt || [];
   	</div>
     <div class="article-info profile-block">
       <div class="article-info-block">
-        39
+        40
         <span>文章</span>
       </div>
       <div class="article-info-block">
@@ -160,7 +160,7 @@ var _hmt = _hmt || [];
 </ul>
 <h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><ul>
 <li>server意外掉线后重新上线，client将会自动重连，不需要自己处理。</li>
-<li>利用<code>streamimg</code>功能，可快速实现推送服务器，即观察者模式。之前有做过利用<code>rabbitmq</code>消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂度、稳定性都将提升。</li>
+<li>利用<code>streaming</code>功能，可快速实现推送服务器，即观察者模式。之前有做过利用<code>rabbitmq</code>消息队列中间件实现消息推送，或许可以用grpc streaming替代，无论性能、复杂度、稳定性都将提升。</li>
 <li>默认情况下，单元调用是按顺序同步执行的，通过async/await可以进行异步调用。同时提供同步、异步方式调用也是一大亮点。 </li>
 </ul>
 <h2 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h2><ul>
@@ -169,7 +169,7 @@ var _hmt = _hmt || [];
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2017/04/17/fragments-of-grpc/" data-id="cj1orz9ac000z0ssi9h55llbb" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2017/04/17/fragments-of-grpc/" data-id="cj219qsr1000wxssikfxq4le3" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -186,6 +186,11 @@ var _hmt = _hmt || [];
       </div>
     </a>
   
+  
+    <a href="/2017/04/28/Feeling-after-reading-White-Dear/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">读《白鹿原》之杂言</div>
+    </a>
   
 </nav>
 
@@ -224,6 +229,15 @@ var _hmt = _hmt || [];
           <li>
             
             <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
+              <p class="item-title"><a href="/2017/04/28/Feeling-after-reading-White-Dear/" class="title">读《白鹿原》之杂言</a></p>
+              <p class="item-date"><time datetime="2017-04-28T01:59:53.000Z" itemprop="datePublished">4月 28 2017</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
               <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
               <p class="item-title"><a href="/2017/04/17/fragments-of-grpc/" class="title">GRPC琐碎</a></p>
               <p class="item-date"><time datetime="2017-04-17T06:57:18.000Z" itemprop="datePublished">4月 17 2017</time></p>
@@ -257,15 +271,6 @@ var _hmt = _hmt || [];
             </div>
           </li>
         
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category"><a class="article-category-link" href="/categories/随笔/">随笔</a></p>
-              <p class="item-title"><a href="/2016/10/15/fruits-and-values/" class="title">水果与价值</a></p>
-              <p class="item-date"><time datetime="2016-10-15T14:36:33.000Z" itemprop="datePublished">10月 15 2016</time></p>
-            </div>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -284,7 +289,7 @@ var _hmt = _hmt || [];
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">5</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">6</span></li></ul>
     </div>
   </div>
 
