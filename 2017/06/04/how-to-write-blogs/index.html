@@ -3,22 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>个人开发者如何巧用消息队列 | Chen&#39;s Blog</title>
+  <title>怎样写好个人博客 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
+  <meta name="description" content="相信很多开发者从毕业开始，就曾想维护一个个人博客站，或许是基于兴趣，或许是为了把自己与咸鱼区分开，又或许只是觉得这是一件很酷的事，告诉周围人自己并不是一个修电脑的。但是由于各种各样的原因或者借口，很多人都没有坚持下来。根据和一些小伙伴的交流，相当一部分原因是不知道博客要写些什么，今天就和大家聊一聊怎么去写博客，写些哪些内容，分享一下个人的微薄经验。 技术博客可以写些什么内容技术问题的解决维护博客初">
 <meta name="keywords">
 <meta property="og:type" content="article">
-<meta property="og:title" content="个人开发者如何巧用消息队列">
-<meta property="og:url" content="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/index.html">
+<meta property="og:title" content="怎样写好个人博客">
+<meta property="og:url" content="http://neilq.github.io/2017/06/04/how-to-write-blogs/index.html">
 <meta property="og:site_name" content="Chen's Blog">
-<meta property="og:description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
-<meta property="og:image" content="http://neilq.github.io/img/mq-example1.png">
-<meta property="og:image" content="http://neilq.github.io/img/mq-example2.png">
-<meta property="og:updated_time" content="2017-04-17T06:42:21.241Z">
+<meta property="og:description" content="相信很多开发者从毕业开始，就曾想维护一个个人博客站，或许是基于兴趣，或许是为了把自己与咸鱼区分开，又或许只是觉得这是一件很酷的事，告诉周围人自己并不是一个修电脑的。但是由于各种各样的原因或者借口，很多人都没有坚持下来。根据和一些小伙伴的交流，相当一部分原因是不知道博客要写些什么，今天就和大家聊一聊怎么去写博客，写些哪些内容，分享一下个人的微薄经验。 技术博客可以写些什么内容技术问题的解决维护博客初">
+<meta property="og:updated_time" content="2017-06-05T01:02:53.609Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="个人开发者如何巧用消息队列">
-<meta name="twitter:description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
-<meta name="twitter:image" content="http://neilq.github.io/img/mq-example1.png">
+<meta name="twitter:title" content="怎样写好个人博客">
+<meta name="twitter:description" content="相信很多开发者从毕业开始，就曾想维护一个个人博客站，或许是基于兴趣，或许是为了把自己与咸鱼区分开，又或许只是觉得这是一件很酷的事，告诉周围人自己并不是一个修电脑的。但是由于各种各样的原因或者借口，很多人都没有坚持下来。根据和一些小伙伴的交流，相当一部分原因是不知道博客要写些什么，今天就和大家聊一聊怎么去写博客，写些哪些内容，分享一下个人的微薄经验。 技术博客可以写些什么内容技术问题的解决维护博客初">
   
   
     <link rel="icon" href="/favicon.png">
@@ -126,7 +123,7 @@ var _hmt = _hmt || [];
   </div>
 </aside>
       <section id="main">
-  <article id="post-where-to-find-message-queue-for-personal-developer" class="article article-single article-type-post" itemscope itemprop="blogPost">
+  <article id="post-how-to-write-blogs" class="article article-single article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
        
       
@@ -134,21 +131,21 @@ var _hmt = _hmt || [];
           
   
     <h1 class="article-title" itemprop="name">
-      个人开发者如何巧用消息队列
+      怎样写好个人博客
     </h1>
   
 
           <div class="article-meta">
           <div class="article-date">
   <i class="fa fa-calendar"></i>
-  <a href="/2015/11/27/where-to-find-message-queue-for-personal-developer/">
-    <time datetime="2015-11-27T08:42:10.000Z" itemprop="datePublished">11月 27 2015</time>
+  <a href="/2017/06/04/how-to-write-blogs/">
+    <time datetime="2017-06-04T13:44:51.000Z" itemprop="datePublished">6月 4 2017</time>
   </a>
 </div>
           
   <div class="article-category">
   	<i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+    <a class="article-category-link" href="/categories/随笔/">随笔</a>
   </div>
 
         </div>
@@ -156,17 +153,29 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <p>提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。</p>
-<p>今天我就介绍两种方案，寻找身边的资源做消息队列。</p>
-<h3 id="云盘"><a href="#云盘" class="headerlink" title="云盘"></a>云盘</h3><p>前段时间我在利用dropbox在多台电脑上共享游戏存档时，发现其具有跨平台、实时、分布式等特点，脑中一个哆嗦，这明明是一个分布式消息分发系统！我们可以将不同文件夹作为隔离的各个消息通道，发布者通过在文件夹中写入文件来传递消息，而订阅者则监控其所在pc上相应的文件夹文件变动，就能准确及时得获得消息。可以说既支持消息队列，还是一个订阅\发布者模式。</p>
-<p>对此我写了个ip同步工具，可以将远程pc的公网ip实时同步到dropbox文件夹。github地址：<a href="https://github.com/NeilQ/ip-sync" target="_blank" rel="external">ip-sync</a><br><img src="/img/mq-example1.png" alt="mq-example1"></p>
-<p>那么关于云盘的选择，在国内环境下，我主推快盘、坚果云，这两者都是支持跨平台的。如果只需要windows支持，那选择就丰富了，不一一列举。</p>
-<h3 id="微博api"><a href="#微博api" class="headerlink" title="微博api"></a>微博api</h3><p>这个点子源于github发现的一个<a href="https://github.com/taizilongxu/weibo_robot" target="_blank" rel="external">有趣的项目</a>，用新浪微博api实现与远端电脑交互。发布者用某个微博账号发布一条微博作为消息，而订阅者则通过监控微博动态获取消息，并将处理结果反馈写入评论，俨然是一个单通道消息队列。<br><img src="/img/mq-example2.png" alt="mq-example2"></p>
-<p>使用这种方法只需要注册一个微博开发者账号，但由于其有1小时1000次的ip限制，实时性会差一点，并且有字数限制。</p>
+        <p>相信很多开发者从毕业开始，就曾想维护一个个人博客站，或许是基于兴趣，或许是为了把自己与咸鱼区分开，又或许只是觉得这是一件很酷的事，告诉周围人自己并不是一个修电脑的。但是由于各种各样的原因或者借口，很多人都没有坚持下来。根据和一些小伙伴的交流，相当一部分原因是不知道博客要写些什么，今天就和大家聊一聊怎么去写博客，写些哪些内容，分享一下个人的微薄经验。</p>
+<h2 id="技术博客可以写些什么内容"><a href="#技术博客可以写些什么内容" class="headerlink" title="技术博客可以写些什么内容"></a>技术博客可以写些什么内容</h2><h3 id="技术问题的解决"><a href="#技术问题的解决" class="headerlink" title="技术问题的解决"></a>技术问题的解决</h3><p>维护博客初期，或者在刚毕业时，我们的知识结构可能并不能支撑自己写出一篇好的博客，稍作尝试便觉得自己写得东西很浅薄，不好意思拿出来，因此很多人在战斗尚未开始便牺牲了。其实这确是我们可以大量产出的阶段。</p>
+<p>此时的我们还很弱小，必然会在工作中遇到大大小小各种各样的问题，犯一些可笑的错误。当我们解决了这些问题，改正了自己的错误之后，恰恰可以写一篇博客来记录这个过程：描述一下问题，阐述一下解决的过程及方案，会来事的还可以发表一下自己对这个问题的看法，一篇博客就产生了，简单到爆。</p>
+<p><strong>虽然技术含量不高，但展示了自己的努力与积极向上的态度。</strong></p>
+<h3 id="官方教程的个人实践"><a href="#官方教程的个人实践" class="headerlink" title="官方教程的个人实践"></a>官方教程的个人实践</h3><p>我们在学习一门技术初期，必然会首先去看官方教程或者技术书籍。可能有些同学没有这个习惯，我在这里推荐大家系统学习一门技术时，还是要先看官方教程，保证原汁原味。</p>
+<p>我们在跟着官方教程一步一步试验完之后，其实就可以写一写博客了。写什么呢？就写教程的内容。当然不是叫大家照抄，你可以改一改嘛，官方例子用Cat，那你就用Fish，这样一个过程下来，还可以巩固一下所学知识。</p>
+<p>我上面说到，有些同学可能没有看官方教程的习惯，那么他们看得是什么？就是这类博客。有人觉得这是抄袭，不好，其实并不需要那么上纲上线，BAT都在抄，你抄一抄怎么了，又没有拿来盈利，对吧。<strong>老祖宗“师夷长技以制夷”的思想还是可以学一学的。</strong></p>
+<h3 id="英文文章翻译"><a href="#英文文章翻译" class="headerlink" title="英文文章翻译"></a>英文文章翻译</h3><p>英语基础比较好的同学，还可以尝试翻译英文技术文章。由于语言的原因，很多进阶的一手知识其实都是需要从英文文章中去获取的。</p>
+<p>当你逐字逐句翻译下来后，必然会对其中包含的知识有深入的理解，这也是一个非常好的学习方法。从官方翻译一篇《GO语言垃圾回收机制介绍》，是不是很酷？</p>
+<p>经常逛技术博客的同学应该可以发现，其实大部分的博客都是基于以上三类。当技术能力达到一定程度时，可能就会觉得这些内容都没什么技术含量，但没人会去嘲笑。不要怕内容简单，不要怕翻译得不好，你觉得简单的东西，可能会给别人带来极大的帮助。<strong>助人前途，就是大功一件。</strong></p>
+<h3 id="技术课题的研究与看法"><a href="#技术课题的研究与看法" class="headerlink" title="技术课题的研究与看法"></a>技术课题的研究与看法</h3><p>当你陆陆续续写过很多博客文章，你的技术实力一定会得到显著提高。不要说我太绝对，我不觉得一个能坚持几年写技术博客的人，其能力会比周围人差。这时候，你便有能力、有信心写出一些自己觉得满意的东西了。你在工作中技术课题的研究，包含几个几十个技术细节，可以拿来写一写。你对现流行的几种技术的差异与争论的看法，可以拿来写一写。你可以写的东西太多了，根本不需要看我在这瞎BB了:)。</p>
+<p>接着可能引来一些争论，放宽心态，阐述观点，以理服人。<strong>这些争论，会带着我们整个行业，大步前行</strong>。</p>
+<h2 id="维护技术博客可以带来哪些收获"><a href="#维护技术博客可以带来哪些收获" class="headerlink" title="维护技术博客可以带来哪些收获"></a>维护技术博客可以带来哪些收获</h2><h3 id="技术增长"><a href="#技术增长" class="headerlink" title="技术增长"></a>技术增长</h3><p>如果大家坚持写了几年博客，收获也必须是巨大的。其中最直接的就是技术增长。</p>
+<p>你解决并反思了无数问题，阅读并理解了若干一手技术资料，发起了一项项的课题研究与实现，你不是大牛谁是大牛？</p>
+<h3 id="求职助力"><a href="#求职助力" class="headerlink" title="求职助力"></a>求职助力</h3><p>我们这么努力是为了什么？为了钱。现在大部分15k，25k的高端职位，基本都是会对维护博客有所加分的。维护一个高质量的博客，<strong>代表了一个开发者的毅力、态度与能力</strong>，高薪职位的大门向你打开。</p>
+<h3 id="个人价值满足"><a href="#个人价值满足" class="headerlink" title="个人价值满足"></a>个人价值满足</h3><p>人生在世短短数十年，除了朝九晚五，总得做些什么。我们踏入社会后，一天大部分醒着的时间都献给了工作，这也是我们实现个人价值、探寻人生意义的重要一部分。</p>
+<p>记录你的事业点滴，拓展你的行业见闻，将会提升你的自信心与个人满足感，亦会让你对待生活也<strong>充满信心，积极向上，披襟斩棘，无所畏惧</strong>。</p>
+<p>以上，</p>
+<p>欢迎指点。</p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/" data-id="cj3jfnohs0032oksi96mvdbt5" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2017/06/04/how-to-write-blogs/" data-id="cj3jfnof20017oksiuh94z1ia" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -174,20 +183,15 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2015/11/24/route-definition-of-restful-api/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/04/28/Feeling-after-reading-White-Dear/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Restful api url设计建议
+          读《白鹿原》之杂言
         
       </div>
     </a>
   
-  
-    <a href="/2015/12/17/my-vim-skills/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">我的vim黑科技</div>
-    </a>
   
 </nav>
 
@@ -195,7 +199,7 @@ var _hmt = _hmt || [];
   
     <section id="comments">
      <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="post-where-to-find-message-queue-for-personal-developer" data-title="个人开发者如何巧用消息队列" data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/"></div>
+    <div class="ds-thread" data-thread-key="post-how-to-write-blogs" data-title="怎样写好个人博客" data-url="http://neilq.github.io/2017/06/04/how-to-write-blogs/"></div>
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
     var duoshuoQuery = {short_name:'neilq'};
