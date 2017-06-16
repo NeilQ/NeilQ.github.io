@@ -3,14 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Category: 测试 | Chen&#39;s Blog</title>
+  <title>wpf经典空域问题 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Chen's Blog">
-<meta property="og:url" content="http://neilq.github.io/categories/测试/index.html">
+  <meta name="description" content="我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在上一篇文章中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popu">
+<meta name="keywords" content="WPF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wpf经典空域问题">
+<meta property="og:url" content="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/index.html">
 <meta property="og:site_name" content="Chen's Blog">
+<meta property="og:description" content="我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在上一篇文章中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popu">
+<meta property="og:updated_time" content="2017-06-16T07:45:11.418Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chen's Blog">
+<meta name="twitter:title" content="wpf经典空域问题">
+<meta name="twitter:description" content="我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在上一篇文章中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popu">
   
   
     <link rel="icon" href="/favicon.png">
@@ -85,12 +90,6 @@ var _hmt = _hmt || [];
     </table>
   </div>
   
-  <div id="header-sub" class="header-sub header-inner">
-    <div class="outer">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/测试/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">7</span></li></ul>
-    </div>
-  </div>
-  
 </header>
     <div class="outer">
       <aside id="profile">
@@ -124,64 +123,89 @@ var _hmt = _hmt || [];
   </div>
 </aside>
       <section id="main">
-  
-  
-    
-    
+  <article id="post-wpf-hwnd-airspace-issue" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
       
-        <div class="archive-year-wrap">
-          <i class="fa fa-calendar"></i>
-          <a href="/archives/2015" class="archive-year">2015</a>
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      wpf经典空域问题
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2017/06/16/wpf-hwnd-airspace-issue/">
+    <time datetime="2017-06-16T07:25:43.000Z" itemprop="datePublished">6月 16 2017</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
         </div>
+        </header>
+      
     
-    
-  <article class="article article-summary">
-    <div class="article-summary-inner">
-      <div class="article-meta">
-        <p class="category"><a class="article-category-link" href="/categories/测试/">测试</a></p>
-        <p class="date"><time datetime="2015-07-07T06:32:50.000Z" itemprop="datePublished">7月 7 2015</time></p>
+      <div class="article-entry" itemprop="articleBody">
+        <p>我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在<a href="http://neilq.github.io/2017/06/16/hosting-winform-control-in-wpf/">上一篇文章</a>中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popup的部分界面遮住，非常尴尬。想想也是合理的，渲染方式不同，当然不可能”夹汉堡包”。</p>
+<p>问题抛出来了，怎么解决呢？既然WinForm控件必然在当前WPF窗口中置顶，那么我们在当前窗口之上，再盖上一层透明的窗口，将popup之类的控件转移到上层窗口中，不就行了吗。原理说起来就是这么简单，具体实施还是挺复杂的，需要定位窗口位置、处理resize、适应dpi缩放等等，幸运的是轮子早有了，我这里直接列出来，需要的同学请自行google吧。</p>
+<ul>
+<li><a href="https://microsoftdwayneneed.codeplex.com/" target="_blank" rel="external">Microsoft.DwayneNeed</a></li>
+<li><a href="https://github.com/chris84948/AirspaceFixer" target="_blank" rel="external">AirspaceFixer</a></li>
+</ul>
+
       </div>
-      <h2 class="article-title">
-        <a href="/2015/07/07/how-to-run-test-without-vs/" class="title">如何让测试脱离vs跑自动化测试</a>
-      </h2>
-      <p class="article-excerpt">
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/" data-id="cj3zj8rc1003fg4si5509iyg6" class="article-share-link">分享到</a>
         
-        为什么要脱离vs跑自动化测试？这本就是个矛盾的问题，负责自动化测试的Test必须要有阅读、审查、修改代码的能力，才能保证测试结果的有效性。但实际情况中测试人员普遍没有这种能力，有代码能力的测试要么在大公司，要么都转开发去了（吐槽）。在这种情况下，让测试去跑自动化，就如同一个不识字的少年捡到一本九阴真经秘籍，却因不识字而毫无用处。那么我们需要做的就是让秘籍变成图谱。
-Visual Statio是开发
-      </p>
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WPF/">WPF</a></li></ul>
+
+      </footer>
     </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/16/hosting-winform-control-in-wpf/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          解决获取WPF控件句柄问题：在WPF中承载WinForm控件
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
   </article>
+  
+    <section id="comments">
+     <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-wpf-hwnd-airspace-issue" data-title="wpf经典空域问题" data-url="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/"></div>
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'neilq'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+    </section>
+  
 
  
-
-  
-    
-    
-    
-  <article class="article article-summary">
-    <div class="article-summary-inner">
-      <div class="article-meta">
-        <p class="category"><a class="article-category-link" href="/categories/测试/">测试</a></p>
-        <p class="date"><time datetime="2015-06-30T11:36:37.000Z" itemprop="datePublished">6月 30 2015</time></p>
-      </div>
-      <h2 class="article-title">
-        <a href="/2015/06/30/thinking-of-automation-test/" class="title">自动化测试思考</a>
-      </h2>
-      <p class="article-excerpt">
-        
-        鉴于之前公司的测试经验，在加入新公司头半个月，Manager让我试着对现有业务建立自动化测试机制。于是便有了这篇文章，关于如何去做，如何做好自动化测试的思考。
-Life is short, 我们直入主题。
-了解系统层级，代码层级作为测试人员，我们首先需要知道系统的层级、架构，或者代码的层级，来规划测试管理方案。举个例子，作为一个web项目，假如说我们的系统分为WebUI，数据接口，DB。
-
-Web
-      </p>
-    </div>
-  </article>
-
- 
-
-  
-  
 </section>
       
         <aside id="sidebar">
