@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://neilq.github.io/2017/06/16/hosting-winform-control-in-wpf/index.html">
 <meta property="og:site_name" content="Chen's Blog">
 <meta property="og:description" content="基于需求，我需要获取WPF的某控件的句柄。 搜索过后得到一些关于HwndSource的代码示例，然而通过尝试发现，此类代码获取的只是Window的句柄，而我需要的是UserControl的句柄。事实上，获取WPF UserControl的句柄是根本不可能的。大家应该都知道，要获取WinForm控件的句柄相当简单，是因为WinForm是通过GDI+来渲染界面，每个控件都拥有自己的句柄，但是WPF的界">
-<meta property="og:updated_time" content="2017-06-16T07:21:25.082Z">
+<meta property="og:updated_time" content="2017-06-16T07:53:19.408Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="解决获取WPF控件句柄问题：在WPF中承载WinForm控件">
 <meta name="twitter:description" content="基于需求，我需要获取WPF的某控件的句柄。 搜索过后得到一些关于HwndSource的代码示例，然而通过尝试发现，此类代码获取的只是Window的句柄，而我需要的是UserControl的句柄。事实上，获取WPF UserControl的句柄是根本不可能的。大家应该都知道，要获取WinForm控件的句柄相当简单，是因为WinForm是通过GDI+来渲染界面，每个控件都拥有自己的句柄，但是WPF的界">
@@ -155,12 +155,12 @@ var _hmt = _hmt || [];
       <div class="article-entry" itemprop="articleBody">
         <p>基于需求，我需要获取WPF的某控件的句柄。</p>
 <p>搜索过后得到一些关于<code>HwndSource</code>的代码示例，然而通过尝试发现，此类代码获取的只是Window的句柄，而我需要的是UserControl的句柄。事实上，<strong>获取WPF UserControl的句柄是根本不可能的。</strong>大家应该都知道，要获取WinForm控件的句柄相当简单，是因为WinForm是通过GDI+来渲染界面，每个控件都拥有自己的句柄，但是WPF的界面是由DirectX渲染，除了Window本身，其他部分都没有句柄。那么既然Winform控件有句柄，WPF控件没有句柄，那么我们能不能在WPF中承载WinForm控件呢？</p>
-<p>显然是可以的。很简单，首先引用<code>WindowsFormsIntegration</code>、<code>System.Windows.Forms</code>两个程序集，接着在Window元素中添加命名空间<code>xmlns:wf=&quot;clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms&quot;</code>，最后就可以在xmal中布局winform控件了</p>
+<p>显然是可以的。很简单，首先引用<code>WindowsFormsIntegration</code>、<code>System.Windows.Forms</code>两个程序集，接着在Window元素中添加命名空间<code>xmlns:wf=&quot;clr-namespace:System.Windows.Formsassembly=System.Windows.Forms&quot;</code>，最后就可以在xmal中布局winform控件了</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">Grid</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">WindowsFormsHost</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">wf:TextBox</span> <span class="attr">x:Name</span>=<span class="string">"tbName"</span> <span class="attr">Text</span>=<span class="string">"Hello"</span>/&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">WindowsFormsHost</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">Grid</span>&gt;</span></div></pre></td></tr></table></figure>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2017/06/16/hosting-winform-control-in-wpf/" data-id="cj3zk1prd001jkosixfnh0o81" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2017/06/16/hosting-winform-control-in-wpf/" data-id="cj3zk50iy001khwsixmbeo404" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WPF/">WPF</a></li></ul>
