@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: C# | Chen&#39;s Blog</title>
+  <title>Tag: WPF | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Chen's Blog">
-<meta property="og:url" content="http://neilq.github.io/tags/C/index.html">
+<meta property="og:url" content="http://neilq.github.io/tags/WPF/index.html">
 <meta property="og:site_name" content="Chen's Blog">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Chen's Blog">
@@ -125,7 +125,7 @@ var _hmt = _hmt || [];
       
         <div class="archive-year-wrap">
           <i class="fa fa-calendar"></i>
-          <a href="/archives/2015" class="archive-year">2015</a>
+          <a href="/archives/2017" class="archive-year">2017</a>
         </div>
     
     
@@ -133,37 +133,15 @@ var _hmt = _hmt || [];
     <div class="article-summary-inner">
       <div class="article-meta">
         <p class="category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
-        <p class="date"><time datetime="2015-09-13T05:27:42.000Z" itemprop="datePublished">9月 13 2015</time></p>
+        <p class="date"><time datetime="2017-06-16T06:57:21.000Z" itemprop="datePublished">6月 16 2017</time></p>
       </div>
       <h2 class="article-title">
-        <a href="/2015/09/13/use-reflection-to-map-object-with-db-2/" class="title">利用反射映射数据库对象(二)</a>
+        <a href="/2017/06/16/hosting-winform-control-in-wpf/" class="title">解决获取WPF控件句柄问题：在WPF中承载WinForm控件</a>
       </h2>
       <p class="article-excerpt">
         
-        在上一篇文章里，我们里用反射，将数据库的查询结果集映射到对象中，以减少代码。现在我们就利用相同的原理来完成更新记录的操作。
-更新记录时，我们需要知道表名，主键名，主键值，以及需要更新的字段信息。最初阶段，这些信息我们只要通过参数传递到方法中。1234public int Update(string tableName, string primaryKeyName, object entity)&amp;#
-      </p>
-    </div>
-  </article>
-
- 
-
-  
-    
-    
-    
-  <article class="article article-summary">
-    <div class="article-summary-inner">
-      <div class="article-meta">
-        <p class="category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
-        <p class="date"><time datetime="2015-07-10T07:56:17.000Z" itemprop="datePublished">7月 10 2015</time></p>
-      </div>
-      <h2 class="article-title">
-        <a href="/2015/07/10/use-reflection-to-map-object-with-db/" class="title">利用反射映射数据库对象</a>
-      </h2>
-      <p class="article-excerpt">
-        
-        12345678910111213141516171819202122232425262728public IEnumerable&amp;lt;User&amp;gt; GetUsers()&amp;#123;    var conn = &quot;&quot;;    using (var sqlConnection = new SqlConnection(conn))    &amp;#123;        using (var comm
+        基于需求，我需要获取WPF的某控件的句柄。
+搜索过后得到一些关于HwndSource的代码示例，然而通过尝试发现，此类代码获取的只是Window的句柄，而我需要的是UserControl的句柄。事实上，获取WPF UserControl的句柄是根本不可能的。大家应该都知道，要获取WinForm控件的句柄相当简单，是因为WinForm是通过GDI+来渲染界面，每个控件都拥有自己的句柄，但是WPF的界
       </p>
     </div>
   </article>
