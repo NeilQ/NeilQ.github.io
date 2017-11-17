@@ -5,17 +5,17 @@
   
   <title>Docker中部署aspnet core应用 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不在赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
+  <meta name="description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不再赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
 <meta name="keywords" content="docker,dotnetcore">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker中部署aspnet core应用">
 <meta property="og:url" content="http://neilq.github.io/2017/11/17/deploy-aspnet-core-app-in-docker/index.html">
 <meta property="og:site_name" content="Chen's Blog">
-<meta property="og:description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不在赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
-<meta property="og:updated_time" content="2017-11-17T08:03:37.043Z">
+<meta property="og:description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不再赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
+<meta property="og:updated_time" content="2017-11-17T08:57:52.924Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker中部署aspnet core应用">
-<meta name="twitter:description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不在赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
+<meta name="twitter:description" content="准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不再赘述，我所用平台是Ubuntu 16.04。附安装手册。 准备应用代码首先我们需要准备应用代码及Dockerfile，并且确保dotnet run可运行，示例代码结构为：12345- Myapp    - Myapp.Core    - Myapp.Api    - Myapp.sln">
   
   
     <link rel="icon" href="/favicon.png">
@@ -153,10 +153,10 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <p>准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不在赘述，我所用平台是Ubuntu 16.04。附<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="external">安装手册</a>。</p>
+        <p>准备将asp.net core 2.0应用部署到docker中，将过程予以记录。Docker的介绍和安装不再赘述，我所用平台是Ubuntu 16.04。附<a href="https://docs.docker.com/engine/installation/" target="_blank" rel="external">安装手册</a>。</p>
 <h2 id="准备应用代码"><a href="#准备应用代码" class="headerlink" title="准备应用代码"></a>准备应用代码</h2><p>首先我们需要准备应用代码及Dockerfile，并且确保<code>dotnet run</code>可运行，示例代码结构为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">- Myapp</div><div class="line">    - Myapp.Core</div><div class="line">    - Myapp.Api</div><div class="line">    - Myapp.sln</div><div class="line">    - Dockerfile</div></pre></td></tr></table></figure></p>
 <p>其中Dockerfile：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">FROM microsoft/aspnetcore-build:2.0 AS build-env</div><div class="line">WORKDIR /app</div><div class="line"></div><div class="line"># copy everything else and build</div><div class="line">COPY ./ ./</div><div class="line">RUN dotnet restore</div><div class="line">RUN dotnet publish -c Release -o out</div><div class="line"></div><div class="line"># build runtime image</div><div class="line">FROM microsoft/aspnetcore:2.0</div><div class="line">WORKDIR /app</div><div class="line">COPY --from=build-env /app/Myapp.Api/out .</div><div class="line">RUN mkdir logs</div><div class="line">Run mkdir pictures</div><div class="line">ENTRYPOINT [&quot;dotnet&quot;, &quot;Myapp.Api.dll&quot;]</div></pre></td></tr></table></figure>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">FROM</span> microsoft/aspnetcore-build:<span class="number">2.0</span> AS build-<span class="keyword">env</span></div><div class="line"><span class="keyword">WORKDIR</span> /app</div><div class="line"></div><div class="line"><span class="comment"># copy everything else and build</span></div><div class="line"><span class="keyword">COPY</span> ./ ./</div><div class="line"><span class="keyword">RUN</span> dotnet restore</div><div class="line"><span class="keyword">RUN</span> dotnet publish -c Release -o out</div><div class="line"></div><div class="line"><span class="comment"># build runtime image</span></div><div class="line"><span class="keyword">FROM</span> microsoft/aspnetcore:<span class="number">2.0</span></div><div class="line"><span class="keyword">WORKDIR</span> /app</div><div class="line"><span class="keyword">COPY</span> --from=build-env /app/Myapp.Api/out .</div><div class="line"><span class="keyword">RUN</span> mkdir logs</div><div class="line"><span class="keyword">RUN</span> mkdir pictures</div><div class="line"><span class="keyword">ENTRYPOINT</span> ["dotnet", "Myapp.Api.dll"]</div></pre></td></tr></table></figure>
 <p>更多的示例，可以在<a href="https://github.com/dotnet/dotnet-docker-samples" target="_blank" rel="external">dotnet官方示例</a>找到。</p>
 <h2 id="修改Docker镜像地址"><a href="#修改Docker镜像地址" class="headerlink" title="修改Docker镜像地址"></a>修改Docker镜像地址</h2><p>由于某些不可描述的原因，我们是无法访问Dockerhub的，导致镜像无法下载，又或者你有个私有镜像地址，需要重新注册一个镜像地址，执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ dockerd --registry-mirror=https://registry.docker-cn.com</div></pre></td></tr></table></figure></p>
 <p>当然，我们也可以直接修改配置文件，位于<code>/etc/docker/daemon.json</code>:<br><figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"registry-mirrors"</span>: [<span class="string">"https://registry.docker-cn.com"</span>]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
@@ -164,7 +164,7 @@ var _hmt = _hmt || [];
 <p>接着运行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ docker run -dit --restart always -p 9999:80 -v /mnt/pictures:/pictures -v /mnt/logs:/logs --name myapp-prod parkingapi</div></pre></td></tr></table></figure></p>
 <p>运行参数说明：</p>
 <ul>
-<li><code>dit</code>: 在后台运行并且进入容器终端bash。这里也可以用<code>-d</code>(在后台运行，不进入容器终端), <code>-it</code>(进入容器终端bash，但不在后台运行)。</li>
+<li><code>-dit</code>: 在后台运行并且进入容器终端bash。这里也可以用<code>-d</code>(在后台运行，不进入容器终端), <code>-it</code>(进入容器终端bash，但不在后台运行)。</li>
 <li><code>--restart always</code>: 设置容器自动启动。</li>
 <li><code>-p 9999:80</code>: 将host端口9999映射到容器端口80。</li>
 <li><code>-v /mnt/pictures:/pictures</code>: 将host目录<code>/mnt/pictures</code>映射到容器目录<code>/pictures</code>。</li>
@@ -180,7 +180,7 @@ var _hmt = _hmt || [];
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2017/11/17/deploy-aspnet-core-app-in-docker/" data-id="cja3mdvy0000hpwsiov88qpib" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2017/11/17/deploy-aspnet-core-app-in-docker/" data-id="cja3ojbib0012k8siktq7wozf" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnetcore/">dotnetcore</a></li></ul>
