@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="mysql5.6 升级到 mysql5.7遇到的问题">
 <meta property="og:url" content="http://neilq.github.io/2016/11/18/problems-from-mysql5-6-to-mysql5-7/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="最近从MySql5.6升级到5.7版本，踩到一些坑，在此记录。 sql_mode=ONLY_FULL_GROUP_BY项目中某些sql报错1234ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUPBY clause and contains nonaggregated column &amp;apos;mydb.t.addres">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.236Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql5.6 升级到 mysql5.7遇到的问题">
@@ -150,18 +151,18 @@ var _hmt = _hmt || [];
     
       <div class="article-entry" itemprop="articleBody">
         <p>最近从MySql5.6升级到5.7版本，踩到一些坑，在此记录。</p>
-<h2 id="sql-mode-ONLY-FULL-GROUP-BY"><a href="#sql-mode-ONLY-FULL-GROUP-BY" class="headerlink" title="sql_mode=ONLY_FULL_GROUP_BY"></a>sql_mode=ONLY_FULL_GROUP_BY</h2><p>项目中某些sql报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP</div><div class="line">BY clause and contains nonaggregated column &apos;mydb.t.address&apos; which</div><div class="line">is not functionally dependent on columns in GROUP BY clause; this</div><div class="line">is incompatible with sql_mode=only_full_group_by</div></pre></td></tr></table></figure></p>
-<p>原因: 某些sql不规范，select的字段没有全部包含在group by子句中，相关mysql手册请参考<a href="http://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html" target="_blank" rel="external">这里</a>和<a href="http://dev.mysql.com/doc/refman/5.7/en/sql-mode.html#sqlmode_only_full_group_by" target="_blank" rel="external">这里</a></p>
+<h2 id="sql-mode-ONLY-FULL-GROUP-BY"><a href="#sql-mode-ONLY-FULL-GROUP-BY" class="headerlink" title="sql_mode=ONLY_FULL_GROUP_BY"></a>sql_mode=ONLY_FULL_GROUP_BY</h2><p>项目中某些sql报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP</span><br><span class="line">BY clause and contains nonaggregated column &apos;mydb.t.address&apos; which</span><br><span class="line">is not functionally dependent on columns in GROUP BY clause; this</span><br><span class="line">is incompatible with sql_mode=only_full_group_by</span><br></pre></td></tr></table></figure></p>
+<p>原因: 某些sql不规范，select的字段没有全部包含在group by子句中，相关mysql手册请参考<a href="http://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html" target="_blank" rel="noopener">这里</a>和<a href="http://dev.mysql.com/doc/refman/5.7/en/sql-mode.html#sqlmode_only_full_group_by" target="_blank" rel="noopener">这里</a></p>
 <p>临时解决方案: 将sql-model中的only_full_group_by移除。</p>
-<h2 id="sql-mode-STRICT-TRANS-TABLES"><a href="#sql-mode-STRICT-TRANS-TABLES" class="headerlink" title="sql_mode=STRICT_TRANS_TABLES"></a>sql_mode=STRICT_TRANS_TABLES</h2><p>某些字段已经设置为text类型，但插入数据时还是报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Data too long for column &apos;Content&apos; at row 1</div></pre></td></tr></table></figure></p>
-<p>原因: 与mysql对表列数据长度限制有关，详细描述参考<a href="http://dev.mysql.com/doc/refman/5.7/en/column-count-limit.html" target="_blank" rel="external">这里</a></p>
+<h2 id="sql-mode-STRICT-TRANS-TABLES"><a href="#sql-mode-STRICT-TRANS-TABLES" class="headerlink" title="sql_mode=STRICT_TRANS_TABLES"></a>sql_mode=STRICT_TRANS_TABLES</h2><p>某些字段已经设置为text类型，但插入数据时还是报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Data too long for column &apos;Content&apos; at row 1</span><br></pre></td></tr></table></figure></p>
+<p>原因: 与mysql对表列数据长度限制有关，详细描述参考<a href="http://dev.mysql.com/doc/refman/5.7/en/column-count-limit.html" target="_blank" rel="noopener">这里</a></p>
 <p>临时解决方案: 将sql-mode中的STRICT_TRANS_TABLES移除</p>
-<h2 id="如何修改sql-mode"><a href="#如何修改sql-mode" class="headerlink" title="如何修改sql-mode"></a>如何修改sql-mode</h2><p>MySql5.7默认的sql-mode为”ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION”，找到 my.ini (Windows)或者my.cnf (linux)文件，添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[mysqld]</div><div class="line">sql-mode=&quot;NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION&quot;</div></pre></td></tr></table></figure></p>
+<h2 id="如何修改sql-mode"><a href="#如何修改sql-mode" class="headerlink" title="如何修改sql-mode"></a>如何修改sql-mode</h2><p>MySql5.7默认的sql-mode为”ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION”，找到 my.ini (Windows)或者my.cnf (linux)文件，添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">sql-mode=&quot;NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION&quot;</span><br></pre></td></tr></table></figure></p>
 <p>将移除上述两种sql-mode。</p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" data-id="cji76w106002szosi7ao7k2is" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" data-id="cji773mrh002e0wsidip8xskr" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySql/">MySql</a></li></ul>
@@ -171,19 +172,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2016/10/30/An-interview-experience/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          一次面试风波
+          开发之短期效率与长期效率
         
       </div>
     </a>
   
   
-    <a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/10/30/An-interview-experience/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">开发之短期效率与长期效率</div>
+      <div class="article-nav-title">一次面试风波</div>
     </a>
   
 </nav>

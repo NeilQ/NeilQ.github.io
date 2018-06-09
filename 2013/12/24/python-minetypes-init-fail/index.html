@@ -6,12 +6,12 @@
   <title> python在windows中mimetypes初始化失败问题解决 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="很多人反馈python2.7在windows中经常会出先如下错误信息：12345678910File &amp;quot;C:\Python27\lib\SimpleHTTPServer.py&amp;quot;, line 208, in SimpleHTTPRequestHandler    mimetypes.init() # try to read system mime.types  File &amp;quo">
-<meta name="keywords">
 <meta property="og:type" content="article">
 <meta property="og:title" content=" python在windows中mimetypes初始化失败问题解决">
 <meta property="og:url" content="http://neilq.github.io/2013/12/24/python-minetypes-init-fail/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="很多人反馈python2.7在windows中经常会出先如下错误信息：12345678910File &amp;quot;C:\Python27\lib\SimpleHTTPServer.py&amp;quot;, line 208, in SimpleHTTPRequestHandler    mimetypes.init() # try to read system mime.types  File &amp;quo">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.237Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content=" python在windows中mimetypes初始化失败问题解决">
@@ -149,13 +149,13 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <p>很多人反馈python2.7在windows中经常会出先如下错误信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">File &quot;C:\Python27\lib\SimpleHTTPServer.py&quot;, line 208, in SimpleHTTPRequestHand</div><div class="line">ler</div><div class="line">    mimetypes.init() # try to read system mime.types</div><div class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 358, in init</div><div class="line">    db.read_windows_registry()</div><div class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 258, in read_windows_registry</div><div class="line">    for subkeyname in enum_types(hkcr):</div><div class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 249, in enum_types</div><div class="line">    ctype = ctype.encode(default_encoding) # omit in 3.x!</div><div class="line">UnicodeDecodeError: &apos;ascii&apos; codec can&apos;t decode byte 0xd7 in position 2: ordinalnot in range(128)</div></pre></td></tr></table></figure></p>
-<p>今天在django admin页加载css文件时也碰倒，经查询是python的一个bug，具体见<a href="http://bugs.python.org/issue9291" target="_blank" rel="external">http://bugs.python.org/issue9291</a><br>官方废除的解决方案是修改mimetype.py文件，见<a href="http://bugs.python.org/file19332/9291a.patch" target="_blank" rel="external">http://bugs.python.org/file19332/9291a.patch</a>,改完即ok。</p>
+        <p>很多人反馈python2.7在windows中经常会出先如下错误信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">File &quot;C:\Python27\lib\SimpleHTTPServer.py&quot;, line 208, in SimpleHTTPRequestHand</span><br><span class="line">ler</span><br><span class="line">    mimetypes.init() # try to read system mime.types</span><br><span class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 358, in init</span><br><span class="line">    db.read_windows_registry()</span><br><span class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 258, in read_windows_registry</span><br><span class="line">    for subkeyname in enum_types(hkcr):</span><br><span class="line">  File &quot;C:\Python27\lib\mimetypes.py&quot;, line 249, in enum_types</span><br><span class="line">    ctype = ctype.encode(default_encoding) # omit in 3.x!</span><br><span class="line">UnicodeDecodeError: &apos;ascii&apos; codec can&apos;t decode byte 0xd7 in position 2: ordinalnot in range(128)</span><br></pre></td></tr></table></figure></p>
+<p>今天在django admin页加载css文件时也碰倒，经查询是python的一个bug，具体见<a href="http://bugs.python.org/issue9291" target="_blank" rel="noopener">http://bugs.python.org/issue9291</a><br>官方废除的解决方案是修改mimetype.py文件，见<a href="http://bugs.python.org/file19332/9291a.patch" target="_blank" rel="noopener">http://bugs.python.org/file19332/9291a.patch</a>,改完即ok。</p>
 <p>该问题在进行http请求操作时可能会出现，是由url编码方式未能正确转换引起的。</p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2013/12/24/python-minetypes-init-fail/" data-id="cji76w100002izosip5f3lffh" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2013/12/24/python-minetypes-init-fail/" data-id="cji773mrj002h0wsif6f0bm7u" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -163,19 +163,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2013/07/18/asp-net-web-service-and-web-api/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/10/16/First-Blog/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          图解asp.net web service 和 web api的区别
+          初建博客
         
       </div>
     </a>
   
   
-    <a href="/2014/10/16/First-Blog/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2013/07/18/asp-net-web-service-and-web-api/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">初建博客</div>
+      <div class="article-nav-title">图解asp.net web service 和 web api的区别</div>
     </a>
   
 </nav>

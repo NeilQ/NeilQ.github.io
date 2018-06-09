@@ -6,12 +6,12 @@
   <title>cs文件推送到git-server中文乱码问题 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="昨天碰到一个问题，某个cs文件push到git server后，里面的所有中文（包括注释和字符串）全都变成了乱码，猜测是编码问题导致，于是将其编码格式从’uft8’改成了’utf8-bom’，再push上去就正常了。BOM（Byte-Order Mark，字节序标记）是Unicode码点U+FEFF。详情参考典型乱码。 至于怎么改编码格式，如果是用vscode，点击右下角编码格式信息就能切换。如果">
-<meta name="keywords">
 <meta property="og:type" content="article">
 <meta property="og:title" content="cs文件推送到git-server中文乱码问题">
 <meta property="og:url" content="http://neilq.github.io/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="昨天碰到一个问题，某个cs文件push到git server后，里面的所有中文（包括注释和字符串）全都变成了乱码，猜测是编码问题导致，于是将其编码格式从’uft8’改成了’utf8-bom’，再push上去就正常了。BOM（Byte-Order Mark，字节序标记）是Unicode码点U+FEFF。详情参考典型乱码。 至于怎么改编码格式，如果是用vscode，点击右下角编码格式信息就能切换。如果">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="cs文件推送到git-server中文乱码问题">
@@ -149,13 +149,13 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <p>昨天碰到一个问题，某个cs文件push到git server后，里面的所有中文（包括注释和字符串）全都变成了乱码，猜测是编码问题导致，于是将其编码格式从’uft8’改成了’utf8-bom’，再push上去就正常了。BOM（Byte-Order Mark，字节序标记）是Unicode码点<code>U+FEFF</code>。详情参考<a href="http://jimliu.net/2015/03/07/something-about-encoding-extra/" target="_blank" rel="external">典型乱码</a>。</p>
-<p>至于怎么改编码格式，如果是用vscode，点击右下角编码格式信息就能切换。如果使用vim，那么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set encoding=utf8</div><div class="line">set bomb</div></pre></td></tr></table></figure></p>
-<p>如果要去掉bom:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">set encoding=utf8</div><div class="line">set nobomb</div></pre></td></tr></table></figure></p>
+        <p>昨天碰到一个问题，某个cs文件push到git server后，里面的所有中文（包括注释和字符串）全都变成了乱码，猜测是编码问题导致，于是将其编码格式从’uft8’改成了’utf8-bom’，再push上去就正常了。BOM（Byte-Order Mark，字节序标记）是Unicode码点<code>U+FEFF</code>。详情参考<a href="http://jimliu.net/2015/03/07/something-about-encoding-extra/" target="_blank" rel="noopener">典型乱码</a>。</p>
+<p>至于怎么改编码格式，如果是用vscode，点击右下角编码格式信息就能切换。如果使用vim，那么：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set encoding=utf8</span><br><span class="line">set bomb</span><br></pre></td></tr></table></figure></p>
+<p>如果要去掉bom:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set encoding=utf8</span><br><span class="line">set nobomb</span><br></pre></td></tr></table></figure></p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/" data-id="cji76w0z9000tzosizpsu5bj5" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/" data-id="cji773mq5000t0wsi1akhbakv" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -163,19 +163,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2016/06/04/Linux_productive_tool_Tmux/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/08/18/mysql-child-parent-recursive/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Linux命令行利器Tmux
+          MySql由child找parent
         
       </div>
     </a>
   
   
-    <a href="/2016/08/18/mysql-child-parent-recursive/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/06/04/Linux_productive_tool_Tmux/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">MySql由child找parent</div>
+      <div class="article-nav-title">Linux命令行利器Tmux</div>
     </a>
   
 </nav>

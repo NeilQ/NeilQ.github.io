@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="CentOS上安装配置MySql">
 <meta property="og:url" content="http://neilq.github.io/2015/08/13/install-config-mysql-on-centos/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="安装并开启执行命令：12sudo yum install mysql-serversudo /sbin/service mysqld start 配置安全信息：1sudo /usr/bin/mysql_secure_installation 设置iptables以启用远程登陆执行命令：12345iptables -A INPUT -p tcp --dport 3306 -m state --sta">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CentOS上安装配置MySql">
@@ -149,19 +150,19 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <h1 id="安装并开启"><a href="#安装并开启" class="headerlink" title="安装并开启"></a>安装并开启</h1><p>执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo yum install mysql-server</div><div class="line">sudo /sbin/service mysqld start</div></pre></td></tr></table></figure></p>
-<p>配置安全信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo /usr/bin/mysql_secure_installation</div></pre></td></tr></table></figure></p>
-<h1 id="设置iptables以启用远程登陆"><a href="#设置iptables以启用远程登陆" class="headerlink" title="设置iptables以启用远程登陆"></a>设置iptables以启用远程登陆</h1><p>执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -p tcp --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT</div><div class="line">iptables -A OUTPUT -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT</div><div class="line"></div><div class="line">/etc/rc.d/init.d/iptables save</div><div class="line">service iptables restart</div></pre></td></tr></table></figure></p>
-<h1 id="设置开机启动"><a href="#设置开机启动" class="headerlink" title="设置开机启动"></a>设置开机启动</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo chkconfig mysqld on</div><div class="line">sudo chkconfig iptables on</div></pre></td></tr></table></figure>
-<h1 id="配置远程登陆账号"><a href="#配置远程登陆账号" class="headerlink" title="配置远程登陆账号"></a>配置远程登陆账号</h1><p>运行mysql shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql -u root -p</div></pre></td></tr></table></figure></p>
+        <h1 id="安装并开启"><a href="#安装并开启" class="headerlink" title="安装并开启"></a>安装并开启</h1><p>执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install mysql-server</span><br><span class="line">sudo /sbin/service mysqld start</span><br></pre></td></tr></table></figure></p>
+<p>配置安全信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /usr/bin/mysql_secure_installation</span><br></pre></td></tr></table></figure></p>
+<h1 id="设置iptables以启用远程登陆"><a href="#设置iptables以启用远程登陆" class="headerlink" title="设置iptables以启用远程登陆"></a>设置iptables以启用远程登陆</h1><p>执行命令：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT</span><br><span class="line"></span><br><span class="line">/etc/rc.d/init.d/iptables save</span><br><span class="line">service iptables restart</span><br></pre></td></tr></table></figure></p>
+<h1 id="设置开机启动"><a href="#设置开机启动" class="headerlink" title="设置开机启动"></a>设置开机启动</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo chkconfig mysqld on</span><br><span class="line">sudo chkconfig iptables on</span><br></pre></td></tr></table></figure>
+<h1 id="配置远程登陆账号"><a href="#配置远程登陆账号" class="headerlink" title="配置远程登陆账号"></a>配置远程登陆账号</h1><p>运行mysql shell<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p</span><br></pre></td></tr></table></figure></p>
 <p>在shell中授权一个远程登陆用户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 授权用户从任何主机连接</div><div class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &apos;myuser&apos;@&apos;%&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</div><div class="line">mysql&gt; FLUSH PRIVILEGES;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 授权用户从指定ip连接, 如192.168.1.2</div><div class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &apos;myuser&apos;@&apos;192.168.1.2&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</div><div class="line">mysql&gt; FLUSH PRIVILEGES;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 授权用户从指定ip连接到指定数据库, 如从192.168.1.2连接到数据库test</div><div class="line">mysql&gt; GRANT ALL PRIVILEGES ON test.* TO &apos;myuser&apos;@&apos;192.168.1.2&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</div><div class="line">mysql&gt; FLUSH PRIVILEGES;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 授权用户从任何主机连接</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &apos;myuser&apos;@&apos;%&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 授权用户从指定ip连接, 如192.168.1.2</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON *.* TO &apos;myuser&apos;@&apos;192.168.1.2&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 授权用户从指定ip连接到指定数据库, 如从192.168.1.2连接到数据库test</span><br><span class="line">mysql&gt; GRANT ALL PRIVILEGES ON test.* TO &apos;myuser&apos;@&apos;192.168.1.2&apos; IDENTIFIED BY &apos;mypassword&apos; WITH GRANT OPTION;</span><br><span class="line">mysql&gt; FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/08/13/install-config-mysql-on-centos/" data-id="cji76w0zy002bzosipzhes86j" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2015/08/13/install-config-mysql-on-centos/" data-id="cji773mra00250wsinmotapcr" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySql/">MySql</a></li></ul>
@@ -171,19 +172,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2015/07/17/web-api-2-custom-help-page-response-type/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/08/14/gitlab7-13-502-issue/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          web api 2 - 自定义help page的返回类型
+          gitlab 7.13 502 issue
         
       </div>
     </a>
   
   
-    <a href="/2015/08/14/gitlab7-13-502-issue/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/07/17/web-api-2-custom-help-page-response-type/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">gitlab 7.13 502 issue</div>
+      <div class="article-nav-title">web api 2 - 自定义help page的返回类型</div>
     </a>
   
 </nav>

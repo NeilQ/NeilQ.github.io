@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="gitlab 7.13 502 issue">
 <meta property="og:url" content="http://neilq.github.io/2015/08/14/gitlab7-13-502-issue/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="单核服务器在gitlab重启之后常常会出现502错误，是因为”unicorn”启动比较慢，造成延迟引起的。我们可以手动执行以下命令解决:12sudo gitlab-ctl hup unicornsudo gitlab-ctl restart sidekiq">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.234Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="gitlab 7.13 502 issue">
@@ -144,11 +145,11 @@ var _hmt = _hmt || [];
       
     
       <div class="article-entry" itemprop="articleBody">
-        <p>单核服务器在gitlab重启之后常常会出现502错误，是因为”unicorn”启动比较慢，造成延迟引起的。我们可以手动执行以下命令解决:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo gitlab-ctl hup unicorn</div><div class="line">sudo gitlab-ctl restart sidekiq</div></pre></td></tr></table></figure></p>
+        <p>单核服务器在gitlab重启之后常常会出现502错误，是因为”unicorn”启动比较慢，造成延迟引起的。我们可以手动执行以下命令解决:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo gitlab-ctl hup unicorn</span><br><span class="line">sudo gitlab-ctl restart sidekiq</span><br></pre></td></tr></table></figure></p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/08/14/gitlab7-13-502-issue/" data-id="cji76w0zo001rzosi2dujyg3p" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2015/08/14/gitlab7-13-502-issue/" data-id="cji773mqw001o0wsihq0071qq" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gitlab/">gitlab</a></li></ul>
@@ -158,19 +159,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2015/08/13/install-config-mysql-on-centos/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/08/15/web-api-serializer-issue/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          CentOS上安装配置MySql
+          web api 对[serialiable]特性的对象序列化问题
         
       </div>
     </a>
   
   
-    <a href="/2015/08/15/web-api-serializer-issue/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/08/13/install-config-mysql-on-centos/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">web api 对[serialiable]特性的对象序列化问题</div>
+      <div class="article-nav-title">CentOS上安装配置MySql</div>
     </a>
   
 </nav>

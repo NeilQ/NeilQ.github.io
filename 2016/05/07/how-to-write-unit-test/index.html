@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何写好单元测试">
 <meta property="og:url" content="http://neilq.github.io/2016/05/07/how-to-write-unit-test/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="我们都知道为模块编写单元测试有很多好处，比如保证软件健壮，建立团队信心，快速定位bug等等，但是许多程序员并不知道怎样写出一个规范的单元测试。事实上，一个无效的单元测试并不能带来如上所属优点。 这里，我想跟大家讨论下怎么写好一个单元测试。我们不扯如何测试，大家可以找一些书看；也不聊具体的测试技术，比如mock和stub，我们只讨论在代码层面上，应该写些什么东西，才能成为一个有效的单元测试。 首先我">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.235Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何写好单元测试">
@@ -146,19 +147,19 @@ var _hmt = _hmt || [];
       <div class="article-entry" itemprop="articleBody">
         <p>我们都知道为模块编写单元测试有很多好处，比如保证软件健壮，建立团队信心，快速定位bug等等，但是许多程序员并不知道怎样写出一个规范的单元测试。事实上，一个无效的单元测试并不能带来如上所属优点。</p>
 <p>这里，我想跟大家讨论下怎么写好一个单元测试。我们不扯如何测试，大家可以找一些书看；也不聊具体的测试技术，比如mock和stub，我们只讨论在代码层面上，应该写些什么东西，才能成为一个有效的单元测试。</p>
-<p>首先我们从来看一个案例，假设我们有个<strong>User</strong>类，定义了<strong>GetUser(int id)</strong>方法。现在我们来通过单元测试来验证这个方法的正确性，程序员小A是这样写的：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGetUser</span>(<span class="params"></span>)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">var</span> userService = <span class="keyword">new</span> UserService();</div><div class="line">    <span class="keyword">var</span> user  = userService.GetUser(<span class="number">1</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先我们从来看一个案例，假设我们有个<strong>User</strong>类，定义了<strong>GetUser(int id)</strong>方法。现在我们来通过单元测试来验证这个方法的正确性，程序员小A是这样写的：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGetUser</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> userService = <span class="keyword">new</span> UserService();</span><br><span class="line">    <span class="keyword">var</span> user  = userService.GetUser(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>为了跑通这个测试方法，小A需要在数据库创建一个id为1的User，然后进入调试状态，断点打在最后一行，然后看看user变量的值是否是所期望的。这种方式导致这个测试方法成了半自动的，脱离了人工干预，这个测试根本跑不起来，无法重复运行、回归测试，也就无法保证代码的健壮性。那么，我们在测试方法体中到底应该怎么写？</p>
 <p>目前，我们的单元测试基本都是遵照AAA规则：Arrange, Act, Assert，即准备，行动，断言。</p>
 <h3 id="Arrange"><a href="#Arrange" class="headerlink" title="Arrange"></a>Arrange</h3><p>在进行上述用例测试时，首先得有个id为1的用户，我们必须准备好这个数据用于测试，而这一准备的动作也必须写在代码中。</p>
 <h3 id="Act"><a href="#Act" class="headerlink" title="Act"></a>Act</h3><p>接着，才是执行我们需要测试的方法，即<strong>GetUser</strong>。</p>
 <h3 id="Assert"><a href="#Assert" class="headerlink" title="Assert"></a>Assert</h3><p>GetUser执行完成后，测试并没有结束，我们需要验证得到的user是否是我们所期望的，数据是否正确，所有的字段是否都得到了，等等。</p>
-<p>综上，我们对<strong>GetUser</strong>这个方法的测试体应该这样写：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGetUser</span>(<span class="params"></span>)</span></div><div class="line">&#123;</div><div class="line">    <span class="comment">// arrange</span></div><div class="line">    <span class="keyword">var</span> userService = <span class="keyword">new</span> UserService();</div><div class="line">    <span class="keyword">var</span> id = userService.Add(<span class="keyword">new</span> User&#123;Name=<span class="string">"bob"</span>, Age=<span class="number">18</span>&#125;);</div><div class="line">    </div><div class="line">    <span class="comment">// act</span></div><div class="line">    <span class="keyword">var</span> user  = userService.GetUser(id);</div><div class="line">    </div><div class="line">    <span class="comment">// assert</span></div><div class="line">    Assert.IsNotNull(user);</div><div class="line">    Assert.AreEqual(<span class="string">"bob"</span>, user.Name);</div><div class="line">    Assert.AreEqual(<span class="number">18</span>, user.Age);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>综上，我们对<strong>GetUser</strong>这个方法的测试体应该这样写：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGetUser</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// arrange</span></span><br><span class="line">    <span class="keyword">var</span> userService = <span class="keyword">new</span> UserService();</span><br><span class="line">    <span class="keyword">var</span> id = userService.Add(<span class="keyword">new</span> User&#123;Name=<span class="string">"bob"</span>, Age=<span class="number">18</span>&#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// act</span></span><br><span class="line">    <span class="keyword">var</span> user  = userService.GetUser(id);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// assert</span></span><br><span class="line">    Assert.IsNotNull(user);</span><br><span class="line">    Assert.AreEqual(<span class="string">"bob"</span>, user.Name);</span><br><span class="line">    Assert.AreEqual(<span class="number">18</span>, user.Age);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>实际上，很多程序员在写单元测试时，会进行前两步，却根本没有断言验证，这是需要注意的地方。</p>
 <p>完。</p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2016/05/07/how-to-write-unit-test/" data-id="cji76w0zv0025zosicc1sg9yb" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2016/05/07/how-to-write-unit-test/" data-id="cji773mr800220wsijjfhmo0q" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unit-Test/">Unit Test</a></li></ul>
@@ -168,19 +169,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2016/04/16/reading-other-people-s-codes/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/06/04/Linux_productive_tool_Tmux/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          知之不如好之：为什么要阅读开源代码
+          Linux命令行利器Tmux
         
       </div>
     </a>
   
   
-    <a href="/2016/06/04/Linux_productive_tool_Tmux/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/04/16/reading-other-people-s-codes/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Linux命令行利器Tmux</div>
+      <div class="article-nav-title">知之不如好之：为什么要阅读开源代码</div>
     </a>
   
 </nav>

@@ -6,12 +6,12 @@
   <title>MySql由child找parent | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="记录sql: 123456SELECT s.*, @code :=(SELECT  ParentCode FROM mytableWHERE Code = @code) AS tmpFROM  (SELECT  @code := 10) varsSTRAIGHT_JOIN mytable sWHERE @code IS NOT NULL;">
-<meta name="keywords">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySql由child找parent">
 <meta property="og:url" content="http://neilq.github.io/2016/08/18/mysql-child-parent-recursive/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="记录sql: 123456SELECT s.*, @code :=(SELECT  ParentCode FROM mytableWHERE Code = @code) AS tmpFROM  (SELECT  @code := 10) varsSTRAIGHT_JOIN mytable sWHERE @code IS NOT NULL;">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.236Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySql由child找parent">
@@ -150,11 +150,11 @@ var _hmt = _hmt || [];
     
       <div class="article-entry" itemprop="articleBody">
         <p>记录sql:</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span> s.*, @code :=</div><div class="line">(<span class="keyword">SELECT</span>  ParentCode <span class="keyword">FROM</span> mytable</div><div class="line"><span class="keyword">WHERE</span> Code = @code) <span class="keyword">AS</span> tmp</div><div class="line"><span class="keyword">FROM</span>  (<span class="keyword">SELECT</span>  @code := <span class="number">10</span>) vars</div><div class="line"><span class="keyword">STRAIGHT_JOIN</span> mytable s</div><div class="line"><span class="keyword">WHERE</span> @code <span class="keyword">IS</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s.*, @code :=</span><br><span class="line">(<span class="keyword">SELECT</span>  ParentCode <span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> Code = @code) <span class="keyword">AS</span> tmp</span><br><span class="line"><span class="keyword">FROM</span>  (<span class="keyword">SELECT</span>  @code := <span class="number">10</span>) vars</span><br><span class="line"><span class="keyword">STRAIGHT_JOIN</span> mytable s</span><br><span class="line"><span class="keyword">WHERE</span> @code <span class="keyword">IS</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2016/08/18/mysql-child-parent-recursive/" data-id="cji76w0zz002ezosiselwfnix" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2016/08/18/mysql-child-parent-recursive/" data-id="cji773mrf002b0wsi18s4ced9" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -162,19 +162,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/09/04/a-practise-of-gitlab-webhook/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          cs文件推送到git-server中文乱码问题
+          记一次gitlab webhook使用实践
         
       </div>
     </a>
   
   
-    <a href="/2016/09/04/a-practise-of-gitlab-webhook/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/08/18/cs-file-zh-garbled-after-pushed-to-git-server/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">记一次gitlab webhook使用实践</div>
+      <div class="article-nav-title">cs文件推送到git-server中文乱码问题</div>
     </a>
   
 </nav>

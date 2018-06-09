@@ -6,12 +6,12 @@
   <title>个人开发者如何巧用消息队列 | Chen&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
-<meta name="keywords">
 <meta property="og:type" content="article">
 <meta property="og:title" content="个人开发者如何巧用消息队列">
 <meta property="og:url" content="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。 今天我就介绍两种方案，寻找身边的资源做消息队列。 云盘前段时间我在">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://neilq.github.io/img/mq-example1.png">
 <meta property="og:image" content="http://neilq.github.io/img/mq-example2.png">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.242Z">
@@ -155,14 +155,14 @@ var _hmt = _hmt || [];
         <p>提起消息队列，我们很容易就想到redis，rabbitmq等在企业中很常用的消息队列。但是在“个人开发者”这个属性前提下，我们可能根本没有服务器去部署redis或者rabbitmq，即使有个vps/云服务器，也无法保证其稳定性——可能哪天嫌维护麻烦就直接停掉了。当我们开发一些有意思的小工具，并且需要用到消息队列时，往往会操碎了蛋。</p>
 <p>今天我就介绍两种方案，寻找身边的资源做消息队列。</p>
 <h3 id="云盘"><a href="#云盘" class="headerlink" title="云盘"></a>云盘</h3><p>前段时间我在利用dropbox在多台电脑上共享游戏存档时，发现其具有跨平台、实时、分布式等特点，脑中一个哆嗦，这明明是一个分布式消息分发系统！我们可以将不同文件夹作为隔离的各个消息通道，发布者通过在文件夹中写入文件来传递消息，而订阅者则监控其所在pc上相应的文件夹文件变动，就能准确及时得获得消息。可以说既支持消息队列，还是一个订阅\发布者模式。</p>
-<p>对此我写了个ip同步工具，可以将远程pc的公网ip实时同步到dropbox文件夹。github地址：<a href="https://github.com/NeilQ/ip-sync" target="_blank" rel="external">ip-sync</a><br><img src="/img/mq-example1.png" alt="mq-example1"></p>
+<p>对此我写了个ip同步工具，可以将远程pc的公网ip实时同步到dropbox文件夹。github地址：<a href="https://github.com/NeilQ/ip-sync" target="_blank" rel="noopener">ip-sync</a><br><img src="/img/mq-example1.png" alt="mq-example1"></p>
 <p>那么关于云盘的选择，在国内环境下，我主推快盘、坚果云，这两者都是支持跨平台的。如果只需要windows支持，那选择就丰富了，不一一列举。</p>
-<h3 id="微博api"><a href="#微博api" class="headerlink" title="微博api"></a>微博api</h3><p>这个点子源于github发现的一个<a href="https://github.com/taizilongxu/weibo_robot" target="_blank" rel="external">有趣的项目</a>，用新浪微博api实现与远端电脑交互。发布者用某个微博账号发布一条微博作为消息，而订阅者则通过监控微博动态获取消息，并将处理结果反馈写入评论，俨然是一个单通道消息队列。<br><img src="/img/mq-example2.png" alt="mq-example2"></p>
+<h3 id="微博api"><a href="#微博api" class="headerlink" title="微博api"></a>微博api</h3><p>这个点子源于github发现的一个<a href="https://github.com/taizilongxu/weibo_robot" target="_blank" rel="noopener">有趣的项目</a>，用新浪微博api实现与远端电脑交互。发布者用某个微博账号发布一条微博作为消息，而订阅者则通过监控微博动态获取消息，并将处理结果反馈写入评论，俨然是一个单通道消息队列。<br><img src="/img/mq-example2.png" alt="mq-example2"></p>
 <p>使用这种方法只需要注册一个微博开发者账号，但由于其有1小时1000次的ip限制，实时性会差一点，并且有字数限制。</p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/" data-id="cji76w10l003ozosiyhpt1axy" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2015/11/27/where-to-find-message-queue-for-personal-developer/" data-id="cji773msh003l0wsi6t29rxso" class="article-share-link">分享到</a>
         
         
       </footer>
@@ -170,19 +170,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2015/11/24/route-definition-of-restful-api/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/12/17/my-vim-skills/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Restful api url设计建议
+          我的vim黑科技
         
       </div>
     </a>
   
   
-    <a href="/2015/12/17/my-vim-skills/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/11/24/route-definition-of-restful-api/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">我的vim黑科技</div>
+      <div class="article-nav-title">Restful api url设计建议</div>
     </a>
   
 </nav>

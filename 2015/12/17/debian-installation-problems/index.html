@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Debian 8安装可能会出现的问题">
 <meta property="og:url" content="http://neilq.github.io/2015/12/17/debian-installation-problems/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="apt-get提示磁盘插入apt-get时会出现类似以下错误Media change: please insert the disc labeled  &amp;#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&amp;#39; in the drive &amp;#39;/media/cdrom/&amp;#39; a">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.232Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Debian 8安装可能会出现的问题">
@@ -147,7 +148,7 @@ var _hmt = _hmt || [];
         <h2 id="apt-get提示磁盘插入"><a href="#apt-get提示磁盘插入" class="headerlink" title="apt-get提示磁盘插入"></a>apt-get提示磁盘插入</h2><p>apt-get时会出现类似以下错误<br><code>Media change: please insert the disc labeled
  &#39;Debian GNU/Linux 7.3.0 _Wheezy_ - Official i386 DVD Binary-1 20131215-03:40&#39;
 in the drive &#39;/media/cdrom/&#39; and press enter</code></p>
-<p>解决方案：<br>修改文件 <code>sudo nano /etc/apt/sources.list</code>，将 <code>deb cdrom:</code>这一行注释掉，如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</div><div class="line"></div><div class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</div><div class="line"></div><div class="line">deb http://ftp.us.debian.org/debian/ wheezy main</div><div class="line">deb-src http://ftp.us.debian.org/debian/ wheezy main</div><div class="line"></div><div class="line">deb http://security.debian.org/ wheezy/updates main</div><div class="line">deb-src http://security.debian.org/ wheezy/updates main</div><div class="line"></div><div class="line"># wheezy-updates, previously known as &apos;volatile&apos;</div><div class="line">deb http://ftp.us.debian.org/debian/ wheezy-updates main</div><div class="line">deb-src http://ftp.us.debian.org/debian/ wheezy-updates main</div></pre></td></tr></table></figure></p>
+<p>解决方案：<br>修改文件 <code>sudo nano /etc/apt/sources.list</code>，将 <code>deb cdrom:</code>这一行注释掉，如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</span><br><span class="line"></span><br><span class="line"># deb cdrom:[Debian GNU/Linux 7.0.0 _Wheezy_ - Official amd64 CD Binary-1 20130$</span><br><span class="line"></span><br><span class="line">deb http://ftp.us.debian.org/debian/ wheezy main</span><br><span class="line">deb-src http://ftp.us.debian.org/debian/ wheezy main</span><br><span class="line"></span><br><span class="line">deb http://security.debian.org/ wheezy/updates main</span><br><span class="line">deb-src http://security.debian.org/ wheezy/updates main</span><br><span class="line"></span><br><span class="line"># wheezy-updates, previously known as &apos;volatile&apos;</span><br><span class="line">deb http://ftp.us.debian.org/debian/ wheezy-updates main</span><br><span class="line">deb-src http://ftp.us.debian.org/debian/ wheezy-updates main</span><br></pre></td></tr></table></figure></p>
 <h2 id="没有安装sudo"><a href="#没有安装sudo" class="headerlink" title="没有安装sudo"></a>没有安装sudo</h2><ol>
 <li>打开终端</li>
 <li>切换到root用户<ul>
@@ -175,7 +176,7 @@ in the drive &#39;/media/cdrom/&#39; and press enter</code></p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/12/17/debian-installation-problems/" data-id="cji76w0zc0010zosi32fybpgh" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2015/12/17/debian-installation-problems/" data-id="cji773mqb00100wsio2hhmn7o" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/debian/">debian</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
@@ -185,19 +186,19 @@ in the drive &#39;/media/cdrom/&#39; and press enter</code></p>
     
 <nav id="article-nav">
   
-    <a href="/2015/12/17/my-vim-skills/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/12/21/AOP-programming-with-Unity-2/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          我的vim黑科技
+          利用Unity进行AOP编程: 拦截器实战（二)
         
       </div>
     </a>
   
   
-    <a href="/2015/12/21/AOP-programming-with-Unity-2/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/12/17/my-vim-skills/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">利用Unity进行AOP编程: 拦截器实战（二)</div>
+      <div class="article-nav-title">我的vim黑科技</div>
     </a>
   
 </nav>

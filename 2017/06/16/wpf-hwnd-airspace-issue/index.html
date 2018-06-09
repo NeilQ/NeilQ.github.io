@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="wpf经典空域问题">
 <meta property="og:url" content="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在上一篇文章中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popu">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-06-16T07:50:32.800Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="wpf经典空域问题">
@@ -152,13 +153,13 @@ var _hmt = _hmt || [];
         <p>我们开发WPF应用时，有时不可避免得需要在其中承载WinForm控件。那么这时会出现一些问题，由于WPF与WinForm界面的渲染方式截然不同（我在<a href="http://neilq.github.io/2017/06/16/hosting-winform-control-in-wpf/">上一篇文章</a>中有具体阐述），所以呈现方式也必然是分开的，也就造成WinForm控件必然在所有WPF控件上方置顶。假如我们这时使用了诸如flyout、modal、popup之类需要置顶的WPF控件，就会出现一种奇怪的现象，WinForm控件会将这类popup的部分界面遮住，非常尴尬。想想也是合理的，渲染方式不同，当然不可能”夹汉堡包”。</p>
 <p>问题抛出来了，怎么解决呢？既然WinForm控件必然在当前WPF窗口中置顶，那么我们在当前窗口之上，再盖上一层透明的窗口，将popup之类的控件转移到上层窗口中，不就行了吗。这就是所谓的空域问题（<strong>Hwnd airspace issue</strong>）。原理说起来就是这么简单，具体实施还是挺复杂的，需要定位窗口位置、处理resize、适应dpi缩放等等，幸运的是轮子早有了，我这里直接列出来，需要的同学请自行google吧。</p>
 <ul>
-<li><a href="https://microsoftdwayneneed.codeplex.com/" target="_blank" rel="external">Microsoft.DwayneNeed</a></li>
-<li><a href="https://github.com/chris84948/AirspaceFixer" target="_blank" rel="external">AirspaceFixer</a></li>
+<li><a href="https://microsoftdwayneneed.codeplex.com/" target="_blank" rel="noopener">Microsoft.DwayneNeed</a></li>
+<li><a href="https://github.com/chris84948/AirspaceFixer" target="_blank" rel="noopener">AirspaceFixer</a></li>
 </ul>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/" data-id="cji76w10p003tzosif1ilc1l9" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2017/06/16/wpf-hwnd-airspace-issue/" data-id="cji773mso003q0wsifwwv6ld2" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WPF/">WPF</a></li></ul>
@@ -168,19 +169,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2017/06/16/hosting-winform-control-in-wpf/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2017/11/17/deploy-aspnet-core-app-in-docker/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          解决获取WPF控件句柄问题：在WPF中承载WinForm控件
+          Docker中部署aspnet core应用
         
       </div>
     </a>
   
   
-    <a href="/2017/11/17/deploy-aspnet-core-app-in-docker/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/06/16/hosting-winform-control-in-wpf/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Docker中部署aspnet core应用</div>
+      <div class="article-nav-title">解决获取WPF控件句柄问题：在WPF中承载WinForm控件</div>
     </a>
   
 </nav>

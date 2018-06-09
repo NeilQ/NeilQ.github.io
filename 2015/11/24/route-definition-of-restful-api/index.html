@@ -10,8 +10,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Restful api url设计建议">
 <meta property="og:url" content="http://neilq.github.io/2015/11/24/route-definition-of-restful-api/index.html">
-<meta property="og:site_name" content="Chen's Blog">
+<meta property="og:site_name" content="Chen&#39;s Blog">
 <meta property="og:description" content="基本CRUDGET /users - 获取user列表GET /users/12 - 获取id为12的userGET /users/12/address 获取id为12的user的address字段GET /users/12?fields=id,name,address 获取id未12的user，并只返回id，name，address字段POST /users - 创建userPUT /users">
+<meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2017-04-17T06:42:21.239Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Restful api url设计建议">
@@ -150,11 +151,11 @@ var _hmt = _hmt || [];
 <h1 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h1><p>GET /users?page=1&amp;size=10 - 获取user列表，第1页，每页10条数据</p>
 <h1 id="数据处理（post与put）"><a href="#数据处理（post与put）" class="headerlink" title="数据处理（post与put）"></a>数据处理（post与put）</h1><p>post 处理不能唯一标识的数据<br>put 处理可以唯一标识的数据<br>POST /users/bulkCreate 批量更新<br>POST /users/bulkDelete 批量删除<br>PUT /users/12/star 关注id为12的user<br>PUT /users/12/unstar 取消关注id为12的user</p>
 <h1 id="层级关系"><a href="#层级关系" class="headerlink" title="层级关系"></a>层级关系</h1><p>对于层级关系比较紧密的实体，某些实体是通过上层实体关联暴露的，比如：<br>GET /company/1/department/2/users<br>出于使用的便捷性考虑，用户也可以只需要理解一个实体名称 users。虽然架构上或者物理上仍然作为下层关联实体存在，但是在接口上可以重新设计为<br>GET users?company=1&amp;&amp;department=2<br>或者同时保留两种url</p>
-<p>参考：<br><a href="http://efe.baidu.com/blog/friendly-restful-api/" target="_blank" rel="external">设计易用的RESTFul API</a><br><a href="http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api" target="_blank" rel="external">Best Practices for Designing a Pragmatic RESTful API</a></p>
+<p>参考：<br><a href="http://efe.baidu.com/blog/friendly-restful-api/" target="_blank" rel="noopener">设计易用的RESTFul API</a><br><a href="http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api" target="_blank" rel="noopener">Best Practices for Designing a Pragmatic RESTful API</a></p>
 
       </div>
       <footer class="article-footer">
-        <a data-url="http://neilq.github.io/2015/11/24/route-definition-of-restful-api/" data-id="cji76w108002vzosiejcfr6bp" class="article-share-link">分享到</a>
+        <a data-url="http://neilq.github.io/2015/11/24/route-definition-of-restful-api/" data-id="cji773mru002t0wsiimxe3dh1" class="article-share-link">分享到</a>
         
         
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/API/">API</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Restful/">Restful</a></li></ul>
@@ -164,19 +165,19 @@ var _hmt = _hmt || [];
     
 <nav id="article-nav">
   
-    <a href="/2015/10/31/AOP-programming-with-Unity-1/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/11/27/where-to-find-message-queue-for-personal-developer/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          利用Unity进行AOP编程: 概念介绍（一)
+          个人开发者如何巧用消息队列
         
       </div>
     </a>
   
   
-    <a href="/2015/11/27/where-to-find-message-queue-for-personal-developer/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/10/31/AOP-programming-with-Unity-1/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">个人开发者如何巧用消息队列</div>
+      <div class="article-nav-title">利用Unity进行AOP编程: 概念介绍（一)</div>
     </a>
   
 </nav>
