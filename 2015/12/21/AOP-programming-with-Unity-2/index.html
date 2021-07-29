@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用Unity进行AOP编程: 拦截器实战（二) | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言上一篇文章里，我们介绍了Unity拦截器的基本概念，本编文章我们将利用它来进行实战。 在Unity Container中配置默认情况下，Unity Container不支持拦截器，因此我们得显式地将其加入到项目中，当然，首先得通过NuGet安装扩展包。12345using Microsoft.Practices.Unity.InterceptionExtension;...IUnityCont">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用Unity进行AOP编程: 拦截器实战（二)">
+<meta property="og:url" content="http://neilq.github.io/2015/12/21/AOP-programming-with-Unity-2/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="前言上一篇文章里，我们介绍了Unity拦截器的基本概念，本编文章我们将利用它来进行实战。 在Unity Container中配置默认情况下，Unity Container不支持拦截器，因此我们得显式地将其加入到项目中，当然，首先得通过NuGet安装扩展包。12345using Microsoft.Practices.Unity.InterceptionExtension;...IUnityCont">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-12-21T07:49:07.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.669Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content="AOP">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-AOP-programming-with-Unity-2" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      利用Unity进行AOP编程: 拦截器实战（二)
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/12/21/AOP-programming-with-Unity-2/">
+    <time datetime="2015-12-21T07:49:07.000Z" itemprop="datePublished">12月 21 2015</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><a href="http://neilq.github.io/2015/10/31/AOP-programming-with-Unity-1/">上一篇文章里</a>，我们介绍了Unity拦截器的基本概念，本编文章我们将利用它来进行实战。</p>
+<h1 id="在Unity-Container中配置"><a href="#在Unity-Container中配置" class="headerlink" title="在Unity Container中配置"></a>在Unity Container中配置</h1><p>默认情况下，Unity Container不支持拦截器，因此我们得显式地将其加入到项目中，当然，首先得通过NuGet安装扩展包。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Microsoft.Practices.Unity.InterceptionExtension;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">IUnityContainer container = <span class="keyword">new</span> UnityContainer();</span><br><span class="line">container.AddNewExtension&lt;Interception&gt;();</span><br></pre></td></tr></table></figure></p>
+<h1 id="定义拦截器"><a href="#定义拦截器" class="headerlink" title="定义拦截器"></a>定义拦截器</h1><p>上篇文章，我们用装饰器模式实现了logging和caching两种横切关系，而在这里，我们通过实现<strong>IInterceptionBehavior</strong>接口来实现拦截。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Microsoft.Practices.Unity.InterceptionExtension;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">LoggingInterceptionBehavior</span> : <span class="title">IInterceptionBehavior</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> IMethodReturn <span class="title">Invoke</span>(<span class="params">IMethodInvocation input,</span></span></span><br><span class="line"><span class="params"><span class="function">    GetNextInterceptionBehaviorDelegate getNext</span>)</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// Before invoking the method on the original target.</span></span><br><span class="line">    WriteLog(String.Format(</span><br><span class="line">      <span class="string">&quot;Invoking method &#123;0&#125; at &#123;1&#125;&quot;</span>,</span><br><span class="line">      input.MethodBase, DateTime.Now.ToLongTimeString()));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Invoke the next behavior in the chain.</span></span><br><span class="line">    <span class="keyword">var</span> result = getNext()(input, getNext);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// After invoking the method on the original target.</span></span><br><span class="line">    <span class="keyword">if</span> (result.Exception != <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      WriteLog(String.Format(</span><br><span class="line">        <span class="string">&quot;Method &#123;0&#125; threw exception &#123;1&#125; at &#123;2&#125;&quot;</span>,</span><br><span class="line">        input.MethodBase, result.Exception.Message,</span><br><span class="line">        DateTime.Now.ToLongTimeString()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      WriteLog(String.Format(</span><br><span class="line">        <span class="string">&quot;Method &#123;0&#125; returned &#123;1&#125; at &#123;2&#125;&quot;</span>,</span><br><span class="line">        input.MethodBase, result.ReturnValue,</span><br><span class="line">        DateTime.Now.ToLongTimeString()));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> IEnumerable&lt;Type&gt; <span class="title">GetRequiredInterfaces</span>(<span class="params"></span>)</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> Type.EmptyTypes;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">bool</span> WillExecute</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123; <span class="keyword">return</span> <span class="literal">true</span>; &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">WriteLog</span>(<span class="params"><span class="built_in">string</span> message</span>)</span></span><br><span class="line">  &#123;</span><br><span class="line">    ...</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>IInterceptionBehavior</strong>接口定义了三个方法：<strong>WillExecute</strong>, <strong>GetRequiredInterface</strong>以及<strong>Invoke</strong>。在大多数场景下，我们可以使用<strong>WillExecute</strong>与<strong>GetRequiredInterface</strong>的默认实现。<strong>WillExecute</strong>属性允许我们通过定义该行为是否应该执行来优化行为链; 在示例代码中，这个属性永远返回<strong>true</strong>，因此这个拦截行为将始终执行。<strong>GetRequiredInterface</strong>方法允许我们指定关联到改拦截行为的接口类型。在示例中，我们将在拦截器注册时指定接口类型，因此这个方法返回<strong>Type.EmptyTypes</strong>。</p>
+<p><strong>Invoke</strong>方法接受2个参数：<strong>input</strong>包含了调用的客户对象的方法名称和参数值的信息，<strong>getNext</strong>是一个委托，定义了拦截管道（或者代理对象）中要调用的下一个拦截行为。在示例中，我们可以看到该拦截行为如何在下一个拦截行为之前获取到客户对象调用的方法名，然后记录方法调用的详细信息。接着它又调用下一个拦截行为，并且记录其是否调用成功。最终，它将调用结果返回给管道中的前一个拦截行为。</p>
+<p>以下的代码展示了更复杂的caching拦截行为。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Microsoft.Practices.Unity.InterceptionExtension;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">CachingInterceptionBehavior</span> : <span class="title">IInterceptionBehavior</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> IMethodReturn <span class="title">Invoke</span>(<span class="params">IMethodInvocation input,</span></span></span><br><span class="line"><span class="params"><span class="function">    GetNextInterceptionBehaviorDelegate getNext</span>)</span></span><br><span class="line">  &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Before invoking the method on the original target.</span></span><br><span class="line">    <span class="keyword">if</span> (input.MethodBase.Name == <span class="string">&quot;GetTenant&quot;</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">var</span> tenantName = input.Arguments[<span class="string">&quot;tenant&quot;</span>].ToString();</span><br><span class="line">      <span class="keyword">if</span> (IsInCache(tenantName))</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">return</span> input.CreateMethodReturn(</span><br><span class="line">          FetchFromCache(tenantName));</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    IMethodReturn result = getNext()(input, getNext);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// After invoking the method on the original target.</span></span><br><span class="line">    <span class="keyword">if</span> (input.MethodBase.Name == <span class="string">&quot;SaveTenant&quot;</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      AddToCache(input.Arguments[<span class="string">&quot;tenant&quot;</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> IEnumerable&lt;Type&gt; <span class="title">GetRequiredInterfaces</span>(<span class="params"></span>)</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> Type.EmptyTypes;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="built_in">bool</span> WillExecute</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">get</span> &#123; <span class="keyword">return</span> <span class="literal">true</span>; &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="built_in">bool</span> <span class="title">IsInCache</span>(<span class="params"><span class="built_in">string</span> key</span>)</span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="built_in">object</span> <span class="title">FetchFromCache</span>(<span class="params"><span class="built_in">string</span> key</span>)</span> &#123;...&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">AddToCache</span>(<span class="params"><span class="built_in">object</span> item</span>)</span> &#123;...&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>代码中可以看出，这个拦截行为过滤出名为<strong>GetTenant</strong>的方法，接着尝试从缓存中获取相关的tenant。假如它在缓存中找到对应的tenant，就没必要继续调用<strong>GetTenant</strong>这个方法来获取tenant，而是直接使用<strong>CreateMethodReturn</strong>这个方法从缓存中将tenant返回给管道中的前一个拦截行为。</p>
+<p>同样地，该行为在调用了下一个拦截行为之后过滤出<strong>SaveTenant</strong>方法 ，并把tenant对象的副本放入了缓存中。</p>
+<blockquote>
+<p>这里我们简单地过滤出方法名称，后面我们将展示如何利用策略配置来聪明地做到这一点。</p>
+</blockquote>
+<h1 id="注册拦截器"><a href="#注册拦截器" class="headerlink" title="注册拦截器"></a>注册拦截器</h1><p>在完成了<strong>CachingIntercptionBehavior</strong>，<strong>LoggingInterceptionBehavior</strong>之后，我们需要将其注册到Unity容器：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Microsoft.Practices.Unity.InterceptionExtension;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">container.AddNewExtension&lt;Interception&gt;();</span><br><span class="line">container.RegisterType&lt;ITenantStore, TenantStore&gt;(</span><br><span class="line">  <span class="keyword">new</span> Interceptor&lt;InterfaceInterceptor&gt;(),</span><br><span class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;LoggingInterceptionBehavior&gt;(),</span><br><span class="line">  <span class="keyword">new</span> InterceptionBehavior&lt;CachingInterceptionBehavior&gt;());</span><br></pre></td></tr></table></figure></p>
+<p><strong>RegisterType</strong>方法的第一个参数——Interceptor对象，定义了拦截器的类型，另外两个参数则注册了<strong>TenantStore</strong>的两个拦截行为。</p>
+<blockquote>
+<p><strong>InterfaceInterception</strong>定义了这个拦截器基于代理对象。我们同样可以使用<strong>TransparentProxyInterceptor</strong>和<strong>VirtualMethodInterception</strong>这两个拦截器类型，之后再作详细介绍。</p>
+</blockquote>
+<p>拦截行为的注册顺序将决定它们在管道中的执行顺序。在该示例中，我们一定不能把顺序弄错，因为当caching拦截行为在缓存中找到tenant后，就不把客户对象的调用请求传递给下一个拦截行为了，假如搞错了顺序且在缓存中找到了tenant，你就不会记录日志了。</p>
+<h1 id="使用拦截器"><a href="#使用拦截器" class="headerlink" title="使用拦截器"></a>使用拦截器</h1><p>最后一步就是如何在运行时使用拦截器了，很简单，我们只需要调用相关方法就行了，logging和caching拦截将会自动附加上去:<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> tenantStore = container.Resolve&lt;ITenantStore&gt;();</span><br><span class="line">tenantStore.SaveTenant(tenant);</span><br></pre></td></tr></table></figure><br>要注意的是，上述<strong>tanantStore</strong>变量并非是<strong>TenantStore</strong>类型的，而是一个动态创建、实现了<strong>ITenantStore</strong>接口的<strong>代理对象</strong>，这个代理对象包含了<strong>ITenantStore</strong>接口定义的方法、属性和事件。上一篇文章的<strong>实例拦截</strong>介绍了这一点。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这篇文章向大家介绍了Unity拦截器在项目中基础的实例拦截实战，下篇文章将给大家介绍其他更加灵活的拦截方式。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/12/21/AOP-programming-with-Unity-2/" data-id="ckromc9rt000138ua2tl79724" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AOP/" rel="tag">AOP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/13/custom-return-fields-of-web-api-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          web api 自定义返回对象的字段
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/17/debian-installation-problems/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Debian 8安装可能会出现的问题</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

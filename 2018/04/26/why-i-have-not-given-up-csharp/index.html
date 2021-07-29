@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我为何还没有放弃C# | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天看到知乎的一个推送：我是不是应该放弃C#，看完各种答案有一些感触。 浏览之下发现除了少数几个情绪化的回答，大家的回答还是很客观的，总结一下，大家都不推荐刚毕业的新手去学习，原因主要是两点：  市场的需求量小，同时真正需求的公司发现从业的开发者又少，尤其是靠谱的开发者。 微软长期的政治不正确。  事实上，如果让我给一些新人推荐，我也不会推荐C#，那么我为什么还没有放弃C#，很简单，因为我克服了第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我为何还没有放弃C#">
+<meta property="og:url" content="http://neilq.github.io/2018/04/26/why-i-have-not-given-up-csharp/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="今天看到知乎的一个推送：我是不是应该放弃C#，看完各种答案有一些感触。 浏览之下发现除了少数几个情绪化的回答，大家的回答还是很客观的，总结一下，大家都不推荐刚毕业的新手去学习，原因主要是两点：  市场的需求量小，同时真正需求的公司发现从业的开发者又少，尤其是靠谱的开发者。 微软长期的政治不正确。  事实上，如果让我给一些新人推荐，我也不会推荐C#，那么我为什么还没有放弃C#，很简单，因为我克服了第">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-26T02:16:01.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.695Z">
+<meta property="article:author" content="Chen">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-why-i-have-not-given-up-csharp" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      我为何还没有放弃C#
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2018/04/26/why-i-have-not-given-up-csharp/">
+    <time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>今天看到知乎的一个推送：我是不是应该放弃C#，看完各种答案有一些感触。</p>
+<p>浏览之下发现除了少数几个情绪化的回答，大家的回答还是很客观的，总结一下，大家都不推荐刚毕业的新手去学习，原因主要是两点：</p>
+<ol>
+<li>市场的需求量小，同时真正需求的公司发现从业的开发者又少，尤其是靠谱的开发者。</li>
+<li>微软长期的政治不正确。</li>
+</ol>
+<p>事实上，如果让我给一些新人推荐，我也不会推荐C#，那么我为什么还没有放弃C#，很简单，因为我克服了第一点原因，而微软克服了或者说正在努力克服第二点原因。</p>
+<p>前几年，我也曾怀疑过我的路，我是不是应该转其他语言。于是我疯狂学习其他各种语言。我学习python，写了一堆网络小工具；我学习node，参与开发了中间层；我学习golang，写了一堆自动化工具，之后我尝试去实现一个web系统，但最后放弃了，因为我悟了。在学习这些语言的过程中，我发现语言真的只是一个工具，而为了使人类的工具更加趁手，各种语言都在吸取其他语言的优势，使得不同语言的特性都越来越相似，无非是一些编程模型不同，并发模型不同。比如js的面向对象化，c#、js、python先后引入async/await特性、匿名函数的丰富，甚至我上述语言的web框架，除去django、rails、beego等大而全的框架，都在向轻量化组建化发展，比如说express、aspdotnet core、flask、gin，写起来除了语法不同函数组织方式不同，框架理念上我不觉得哪里还有不同，就是个功能覆盖全不全的问题。</p>
+<p>随着计算机基础知识的丰富，工作经验的增加，我也认识到软件归根结底就是算法加数据结构，大部分开发者接触的复杂任务，无非就是利用算法和数据结构进行资源管理，这些资源包括网络，包括io，再底层一些包括内存、线程的管理，这样看来，纠结语言这一工具，反而有些下乘了。Docker厉害吧？集群厉害吧？大数据、人工只能厉害吧？厉害，然而这些新事物的核心理念，专家、博士都帮你研究好了，绝大部分普通开发者都只是翻着官方文档，照着业务应用罢了，国内很多公司都存在者面试造火箭、进门拧螺丝的现象。而一些高层次的公司，更看重的是开发者的学习能力，很多公司招聘要求上从来没有规定一定要精通某某语言，不会，ok，学就行了，看重的就是你的学习思考和解决问题的能力。始终保持学习的人，永远不会被市场淘汰。可能你会说我层次低了，没错我同意，而且我作为一名普通开发者，会为我能和你这样高层次的人物交流感到自豪。</p>
+<p>再来看第二条原因，由于某些高层的原因，以前微软是看不起开源的。但现在，我看到的是发展和改变，其实微软一直是在努力发展的。以前Webform时代，人们嫌太重，好的，我出个mvc，我再来个web api；接着嫌弃微软不开源，不跨平台，ok，我发展dotnetcore，甚至2017年微软在github的贡献成为第一；我们还可以看一看尚未正式发布的dotnetcore2.1，看一看新特性Span<T>，我不喜欢用跟其他语言的缺点来烘托dotnet，但我想安全地直接操作内存数组，应该是足够便捷、足够高效了吧。</p>
+<p>用发展的眼光看问题，是马克思主义辩证法的核心内容之一。这不仅要求我们始终发展自身，更新自身的知识结构，也同样要求我们用发展的眼光去看其他事物。我们可以很大方得承认某个事物以前不好，但我们绝不应该在不更新知识的情况下，用3年前的印象，来评价3年后的某个事物。这也是毛主席指导人民从半殖民社会走向新中国并使你我能舒适得坐着讨论“我们该不该放弃C#”的武器之一，希望大家共勉。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2018/04/26/why-i-have-not-given-up-csharp/" data-id="ckromc9ty003z38ua5hlg9dp0" class="article-share-link">分享到</a>
+        
+        
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2018/06/08/develop-a-dotnet-site-installer/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          开发一个dotnet core站点安装器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/18/dotnet-ci-base-on-cake-build/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">基于cake-build的dotnet自动化发布</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

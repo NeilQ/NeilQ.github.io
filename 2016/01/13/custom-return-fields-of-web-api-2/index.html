@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>web api 自定义返回对象的字段 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="由于前端的需求，我们需要自定义返回对象的字段，以减少不必要的网络开销。 假设我们有这样一个类12345678910111213public class Foo&amp;#123;    public string A &amp;#123; get; set; &amp;#125;    public int B &amp;#123; get; set; &amp;#125;    public bool C &amp;#123; get; se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web api 自定义返回对象的字段">
+<meta property="og:url" content="http://neilq.github.io/2016/01/13/custom-return-fields-of-web-api-2/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="由于前端的需求，我们需要自定义返回对象的字段，以减少不必要的网络开销。 假设我们有这样一个类12345678910111213public class Foo&amp;#123;    public string A &amp;#123; get; set; &amp;#125;    public int B &amp;#123; get; set; &amp;#125;    public bool C &amp;#123; get; se">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://neilq.github.io/img/custom_fields.png">
+<meta property="article:published_time" content="2016-01-13T01:56:31.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.675Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content=".NET">
+<meta property="article:tag" content="Web Api">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://neilq.github.io/img/custom_fields.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-custom-return-fields-of-web-api-2" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      web api 自定义返回对象的字段
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2016/01/13/custom-return-fields-of-web-api-2/">
+    <time datetime="2016-01-13T01:56:31.000Z" itemprop="datePublished">1月 13 2016</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>由于前端的需求，我们需要自定义返回对象的字段，以减少不必要的网络开销。</p>
+<p>假设我们有这样一个类<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Foo</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> A &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> B &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">bool</span> C &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> Bar Bar &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Bar</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> F1 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> F2 &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>通常情况下，我们在get foo api中将会返回整个Foo对象，但有时前端的需求可能只需要返回Foo对象的A、B两个对象。针对此类需求，我们不可能为所有组合都写个api，因此动态化地返回对象字段成了必然要求。</p>
+<p>那么，我们怎样去实现这一功能呢？诶对了，<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/system.dynamic.expandoobject.aspx">ExpendoObject</a>和反射。</p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><p>实现思路很简单，首先，我们需要调用者传来一个query string，比如”fields=a,b”，通过逗号分割字符串提取出自定义的字段。然后我们将其与Foo中反射得到的属性匹配，组成ExpandoObject对象，将其返回。下面展示一个实现代码：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ExpandoMapper</span> : <span class="title">IExpandoMapper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ExpandoObject <span class="title">Map</span>&lt;<span class="title">T</span>&gt;(<span class="params"><span class="built_in">string</span> fields, T entity</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> fieldHash = Utils.SplitCommaHash(fields);</span><br><span class="line">        <span class="keyword">if</span> (fieldHash == <span class="literal">null</span> || fieldHash.Count == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> props = <span class="keyword">typeof</span>(T).GetProperties();</span><br><span class="line">        <span class="keyword">var</span> comparable = <span class="keyword">new</span> IgnoreCaseStringCompare();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> expando = <span class="keyword">new</span> ExpandoObject();</span><br><span class="line">        <span class="keyword">var</span> dictionary = (IDictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt;)expando;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; props.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (fieldHash.Contains(props[i].Name, comparable))</span><br><span class="line">            &#123;</span><br><span class="line">                dictionary.Add(props[i].Name, props[i].GetValue(entity));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> expando;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">List</span>&lt;<span class="title">ExpandoObject</span>&gt; <span class="title">MapList</span>&lt;<span class="title">T</span>&gt;(<span class="params"><span class="built_in">string</span> fields, IList&lt;T&gt; entities</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> fieldHash = Utils.SplitCommaHash(fields);</span><br><span class="line">        <span class="keyword">if</span> (fieldHash == <span class="literal">null</span> || fieldHash.Count == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> props = <span class="keyword">typeof</span>(T).GetProperties();</span><br><span class="line">        <span class="keyword">var</span> comparable = <span class="keyword">new</span> IgnoreCaseStringCompare();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;ExpandoObject&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; entities.Count; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> expando = <span class="keyword">new</span> ExpandoObject();</span><br><span class="line">            <span class="keyword">var</span> dictionary = (IDictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt;)expando;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; props.Length; j++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> prop = props[j];</span><br><span class="line">                <span class="keyword">if</span> (fieldHash.Contains(prop.Name, comparable))</span><br><span class="line">                &#123;</span><br><span class="line">                    dictionary.Add(prop.Name, prop.GetValue(entities[i]));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            list.Add(expando);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由此，api我们可以这样写：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> IHttpActionResult <span class="title">Get</span>(<span class="params"><span class="built_in">string</span> fields = <span class="string">&quot;&quot;</span></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="keyword">value</span> = <span class="keyword">new</span> Foo</span><br><span class="line">    &#123;</span><br><span class="line">        A = <span class="string">&quot;aaa&quot;</span>,</span><br><span class="line">        B = <span class="number">2</span>,</span><br><span class="line">        C = <span class="literal">true</span>,</span><br><span class="line">        Bar = <span class="keyword">new</span> Bar</span><br><span class="line">        &#123;</span><br><span class="line">            F1 = <span class="string">&quot;f1&quot;</span>,</span><br><span class="line">            F2 = <span class="string">&quot;f2&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> mapper = <span class="keyword">new</span> ExpandoMapper();</span><br><span class="line">    <span class="keyword">var</span> obj = mapper.Map(fields, <span class="keyword">value</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Ok(obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>效果是这样的：<br><img src="/img/custom_fields.png" alt="custom fields"></p>
+<p>另外要注意的是，这里我们在api中直接声明<strong>ExpandoMapper</strong>对象，但我更建议大家将其接口化，注入到<strong>controller</strong>中，方便后期优化。</p>
+<h3 id="性能优化想法"><a href="#性能优化想法" class="headerlink" title="性能优化想法"></a>性能优化想法</h3><p>从上面的代码中可以看出，我们在每次映射对象时都对源类进行了属性反射，当请求量达到一定级别，必然会影响到性能。因此后期打算将类反射后的属性缓存起来，这样只需在启动时反射一次，将性能开销降到最低。<br>细心的朋友会发现，以上想法在实体对象不多的情况下是可行的。当项目中实体对象量大时，过多的缓存又会提高内存占用。假如达到某个数量级别，我的想法是使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cache_algorithms">LRU cache(最近最少使用缓存)策略</a>来优化。<br>当然，<strong>抛开剂量谈伤害都是耍流氓</strong>，今天暂且研究到这里，把时间放在更重要的地方，假如后期有这方面的代码实现，我再来更新。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2016/01/13/custom-return-fields-of-web-api-2/" data-id="ckromc9sk000x38ua9jrw8rfs" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET/" rel="tag">.NET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-Api/" rel="tag">Web Api</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2016/01/23/AOP-programming-with-Unity-3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          利用Unity进行AOP编程: 策略注入（三)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/21/AOP-programming-with-Unity-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">利用Unity进行AOP编程: 拦截器实战（二)</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>开发一个dotnet core站点安装器 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近接到一个任务，需要为系统开发一个安装包。我们的项目包含一个pg数据库，两个dotnetcore站点，一个桌面应用程序。大家知道，在windows平台上部署站点时，需要很多繁琐的手动操作，比如开启IIS，部署应用，修改配置，修改环境变量等等。但在给客户部署演示系统时，就显得很低效，需要实施过去帮忙，很多客户都是没有能力独自完成部署，因此就有了傻瓜式安装包的需求。 之前这些工作都是手动操作，虽然我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发一个dotnet core站点安装器">
+<meta property="og:url" content="http://neilq.github.io/2018/06/08/develop-a-dotnet-site-installer/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="最近接到一个任务，需要为系统开发一个安装包。我们的项目包含一个pg数据库，两个dotnetcore站点，一个桌面应用程序。大家知道，在windows平台上部署站点时，需要很多繁琐的手动操作，比如开启IIS，部署应用，修改配置，修改环境变量等等。但在给客户部署演示系统时，就显得很低效，需要实施过去帮忙，很多客户都是没有能力独自完成部署，因此就有了傻瓜式安装包的需求。 之前这些工作都是手动操作，虽然我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://neilq.github.io/img/park-installer.png">
+<meta property="article:published_time" content="2018-06-08T14:04:10.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.678Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content="dotnetcore">
+<meta property="article:tag" content="electron">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://neilq.github.io/img/park-installer.png">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-develop-a-dotnet-site-installer" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      开发一个dotnet core站点安装器
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2018/06/08/develop-a-dotnet-site-installer/">
+    <time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>最近接到一个任务，需要为系统开发一个安装包。我们的项目包含一个pg数据库，两个dotnetcore站点，一个桌面应用程序。大家知道，在windows平台上部署站点时，需要很多繁琐的手动操作，比如开启IIS，部署应用，修改配置，修改环境变量等等。但在给客户部署演示系统时，就显得很低效，需要实施过去帮忙，很多客户都是没有能力独自完成部署，因此就有了傻瓜式安装包的需求。</p>
+<p>之前这些工作都是手动操作，虽然我写了一些脚本将一些操作自动化，但还是有些工作是bat脚本无法胜任的。当然有一些例如innosetup之类的打包工具，但实际上它们的工作配置也通过脚本来完成，或许能全部满足我的需求。那为什么我甚至连调研是否可行都没有，而选择自己去开发一个安装器呢？这里我有一点私心，因为这些打包工具都有一些年代了，界面跟不上时代。作为一个新系统，在产品上就应该去争这些细节，所以我选择做一个类似于vs2017安装器的一个东西，灵感也是来自于vs2017安装器。</p>
+<p>技术上我参考vs2017安装器，采用electron+nodejs+angular的组合，除去界面，一个站点的安装流程需要做如下工作：</p>
+<ul>
+<li>解压</li>
+<li>安装数据库</li>
+<li>设置环境变量</li>
+<li>安装运行环境</li>
+<li>开启iis功能</li>
+<li>部署站点</li>
+<li>修改配置文件(ip,图片文件夹等)</li>
+<li>修改站点ip</li>
+<li>安装注册表</li>
+</ul>
+<p>以上就是一个安装步骤的核心内容，可以看出，以上全部做到不进行任何手动操作还是有一定挑战性的，这里大量使用了windows的cmd命令，顺便感谢一下msdn的文档，真的非常全。这里我详细介绍一些这些步骤的开发思路及历程。</p>
+<h2 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h2><p>解压使用了nodejs的unzipper包，没什么可说的，按照readme操作就行了。这里要提一下系统压缩包的存放位置，在开发时，我将压缩包放在项目根目录，编译后放到运行路径的根目录。但实际上在查找时的方式是不同的。开发时，可以通过electron<code>remote.app.getAppPath()</code>获得，但打包后，<code>remote.app.getAppPath()</code>将会获得<code>resouce/electron.asar</code>的目录，这时通过<code>remote.app.getPath(&#39;exe&#39;)</code>可以直接获得运行目录。</p>
+<h2 id="安装数据库"><a href="#安装数据库" class="headerlink" title="安装数据库"></a>安装数据库</h2><p>系统采用的postgresql数据库，作为最先进的数据库，有一个优势：提供了命令工具直接完成安装工作。当然mysql的biniary包可能也有，我没有研究过。SqlServer就不要想了。</p>
+<p>参考代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`<span class="subst">$&#123;binPath&#125;</span>\\initdb -U postgres -D &quot;<span class="subst">$&#123;dataPath&#125;</span>&quot; --encoding=utf8 --locale=C`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`<span class="subst">$&#123;binPath&#125;</span>\\pg_ctl register -D &quot;<span class="subst">$&#123;dataPath&#125;</span>&quot; -N AcartonsPostgreSQL`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`copy /y <span class="subst">$&#123;serverFolderPath&#125;</span>\\postgresql.conf <span class="subst">$&#123;dataPath&#125;</span>`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`copy /y <span class="subst">$&#123;serverFolderPath&#125;</span>\\pg_hba.conf <span class="subst">$&#123;dataPath&#125;</span>`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`net start AcartonsPostgreSQL`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`<span class="subst">$&#123;binPath&#125;</span>\\createdb -h 127.0.0.1 -p 5433 -E UTF8 -U postgres acartons_parking`</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`<span class="subst">$&#123;binPath&#125;</span>\\pg_restore -h 127.0.0.1 -p 5433 -C -c -d postgres -U postgres <span class="subst">$&#123;serverFolderPath&#125;</span>\\db.dump`</span>);</span><br><span class="line"><span class="comment">// tslint:disable-next-line:max-line-length</span></span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`<span class="subst">$&#123;binPath&#125;</span>\\psql -h 127.0.0.1 -p 5433 -U postgres -c &quot;alter user postgres with password &#x27;postgres&#x27;;&quot; acartons_parking`</span>);</span><br></pre></td></tr></table></figure><br>从上到下命令含义为：初始化数据库、安装数据库服务、复制预定义的配置文件、启动数据库服务、创建数据库、还原预定义的表结构、修改密码。</p>
+<p><code>this.execCommand</code>是我根据node模块<code>child_process.exec</code>封装的方法，这里有个trick，我后面再讲。</p>
+<h2 id="设置环境变量PATH"><a href="#设置环境变量PATH" class="headerlink" title="设置环境变量PATH"></a>设置环境变量PATH</h2><p>这一步骤需要将postgresql的bin目录添加到环境变量Path中，花了我很多时间，起初我搜到的方案是使用<code>setx</code>命令，但是<code>setx</code>命令有个局限性，最大只能有1024个字符，超出部分会被截断丢失，这显然是不行的。</p>
+<p>接着我搜索得知，windows环境变量保存再注册表键<code>HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment</code>中，于是我尝试使用win32 api直接改注册表。实际操作过程中，发现需要使用<code>node-gyp</code>编译原生模块，而要让<code>node-gyp</code>工作，在windows上需要c++ vsbuild环境，费了很大力气终于成功，但是使用<code>electron-rebuild</code>编译时又出现了问题，于是我想，就算解决了，以后换个环境，或者其他人维护这个项目，又得浪费一番时间，于是我放弃了继续研究。</p>
+<p>接着我想，node调用win32 api很难，那我用C或C#开发个exe命令行程序是不是可行呢？再接着想，是不是有现成的命令来修改注册表？于是找到了<code>reg</code>命令，具体参考<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/reg">msdn</a>，<code>reg</code>命令提供了丰富的注册表操作，参考代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> pathValue = <span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;REG QUERY &quot;HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment&quot; /v &quot;path&quot;&#x27;</span>);</span><br><span class="line">pathValue = pathValue.split(<span class="string">&#x27;   &#x27;</span>)[<span class="number">3</span>].replace(<span class="regexp">/(?:\r\n|\r|\n)/g</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span> (pathValue &amp;&amp; pathValue[pathValue.length - <span class="number">1</span>] !== <span class="string">&#x27;;&#x27;</span>) &#123;</span><br><span class="line">  pathValue += <span class="string">&#x27;;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (!pathValue.includes(<span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;pgsql&#x27;</span>, <span class="string">&#x27;bin&#x27;</span>))) &#123;</span><br><span class="line">  pathValue += (<span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;pgsql&#x27;</span>, <span class="string">&#x27;bin&#x27;</span>) + <span class="string">&#x27;;&#x27;</span>);</span><br><span class="line">  <span class="comment">// tslint:disable-next-line:max-line-length</span></span><br><span class="line">  <span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`reg add &quot;HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment&quot; /f /v &quot;Path&quot; /t REG_EXPAND_SZ /d &quot;<span class="subst">$&#123;pathValue&#125;</span>&quot;`</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><br>代码中可以发现，我对注册表查询结果做了一些字符串截取，因为命令返回结果包含了一些不必要的字符，大家尝试调用以下就明白了。</p>
+<h2 id="安装运行环境"><a href="#安装运行环境" class="headerlink" title="安装运行环境"></a>安装运行环境</h2><p>运行dotnetcore程序需要安装一些必备库，平时我们都是通过下载并运行安装包，点击下一步完成安装，但实际上这些库都可以通过调用命令<code>start /wait [appName] /S</code>静默安装，实际测试感觉还比手动安装快。参考代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> cmd = <span class="string">&#x27;start /wait &#x27;</span> + <span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;sdk&#x27;</span>, <span class="string">&#x27;vcredist_x64.exe&#x27;</span>) + <span class="string">&#x27; /S&#x27;</span>;</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(cmd);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> glob = <span class="built_in">window</span>.require(<span class="string">&#x27;glob&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> hostfiles = glob.sync(<span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;sdk&#x27;</span>, <span class="string">&#x27;dotnet-hosting*(-2.1.0-win).exe&#x27;</span>), &#123; <span class="attr">nodir</span>: <span class="literal">true</span> &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (hostfiles.length === <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="built_in">this</span>.disableServerInstall = <span class="literal">true</span>;</span><br><span class="line">  <span class="built_in">this</span>.notification.warning(<span class="string">&#x27;安装组件缺失&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;未找到aspnetcore-host组件&#x27;</span>, &#123; <span class="attr">nzDuration</span>: <span class="number">10000</span> &#125;);</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  cmd = <span class="string">&#x27;start /wait &#x27;</span> + hostfiles[<span class="number">0</span>] + <span class="string">&#x27; /S&#x27;</span>;</span><br><span class="line">  <span class="keyword">await</span> <span class="built_in">this</span>.execCommand(cmd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="开启iis功能"><a href="#开启iis功能" class="headerlink" title="开启iis功能"></a>开启iis功能</h2><p>开启IIS功能，平时我们都是在控制面板<code>程序和功能</code>进行，那么这里也有一个命令可以安装：<code>DIAM</code>。参考代码：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> cmd = <span class="string">&#x27;DISM /Online &#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> args = [<span class="string">&#x27;/Enable-Feature&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-ApplicationDevelopment&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-ASPNET /FeatureName:IIS-BasicAuthentication&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-ClientCertificateMappingAuthentication&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-CommonHttpFeatures&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-CustomLogging&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-DefaultDocument&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-DigestAuthentication&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-DirectoryBrowsing&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HealthAndDiagnostics&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HostableWebCore&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpCompressionDynamic&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpCompressionStatic&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpErrors&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpLogging&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpRedirect&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-HttpTracing&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-IISCertificateMappingAuthentication&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-IPSecurity&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-LoggingLibraries&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-ManagementService&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-Performance&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-RequestFiltering&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-RequestMonitor&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-Security&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-ServerSideIncludes&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-StaticContent&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-WebServer&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/FeatureName:IIS-WebServerManagementTools&#x27;</span>];</span><br><span class="line">cmd += args.join(<span class="string">&#x27; &#x27;</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(cmd);</span><br></pre></td></tr></table></figure></p>
+<h2 id="修改配置文件-ip-图片文件夹等"><a href="#修改配置文件-ip-图片文件夹等" class="headerlink" title="修改配置文件(ip,图片文件夹等)"></a>修改配置文件(ip,图片文件夹等)</h2><p>站点release程序中需要根据实际情况修改配置，巧的是dotnetcore的配置文件正好是json文件，nodejs读取文件转成json改一个属性再写回去，相当方便，就不贴代码了。</p>
+<h2 id="部署站点"><a href="#部署站点" class="headerlink" title="部署站点"></a>部署站点</h2><p>到这里，我不得不佩服windows命令的完善程度，部署站点，无非是创建应用程序池，创建站点，然后修改一下配置，使用<code>AppCmd</code>命令，具体请参考<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/iis/get-started/getting-started-with-iis/getting-started-with-appcmdexe">msdn</a>，参考代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> apiPath = <span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;api&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> adminPath = <span class="built_in">this</span>.eleService.path.join(serverFolderPath, <span class="string">&#x27;admin&#x27;</span>);</span><br><span class="line"><span class="comment">// stop default web site</span></span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD stop sites &quot;Default Web Site&quot;&#x27;</span>);</span><br><span class="line"><span class="comment">// api</span></span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD delete apppool parking-api-prod&#x27;</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([</span><br><span class="line">  <span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD add apppool&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/name:parking-api-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/managedRuntimeVersion:&quot;&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/managedPipelineMode:&quot;Integrated&quot;&#x27;</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([</span><br><span class="line">  <span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD set apppool parking-api-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/autoStart:&quot;True&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/startMode:&quot;AlwaysRunning&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/recycling.periodicRestart.time:&quot;00:00:00&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/recycling.disallowOverlappingRotation:&quot;True&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.idleTimeoutAction:&quot;Suspend&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.idleTimeout:&quot;00:00:00&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.maxProcesses:&quot;1&quot;&#x27;</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">`%systemroot%\\system32\\inetsrv\\APPCMD delete site parking-api-prod `</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([</span><br><span class="line">  <span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD add site&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/name:parking-api-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/id:6&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/bindings:http/*:9876:&#x27;</span>,</span><br><span class="line">  <span class="string">`/physicalPath:&quot;<span class="subst">$&#123;apiPath&#125;</span>&quot;`</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD set app &quot;parking-api-prod/&quot; /applicationPool:parking-api-prod&#x27;</span>);</span><br><span class="line"><span class="comment">// admin</span></span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD delete apppool parking-admin-prod&#x27;</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([</span><br><span class="line">  <span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD add apppool&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/name:parking-admin-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/managedRuntimeVersion:&quot;&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/managedPipelineMode:&quot;Integrated&quot;&#x27;</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD set apppool parking-admin-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/autoStart:&quot;True&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/startMode:&quot;AlwaysRunning&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/recycling.periodicRestart.time:&quot;00:00:00&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/recycling.disallowOverlappingRotation:&quot;True&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.idleTimeoutAction:&quot;Suspend&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.idleTimeout:&quot;00:00:00&quot;&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/processModel.maxProcesses:&quot;1&quot;&#x27;</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD delete site parking-admin-prod&#x27;</span>);</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand([</span><br><span class="line">  <span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD add site&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/name:parking-admin-prod&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/id:8&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;/bindings:http/*:80:&#x27;</span>,</span><br><span class="line">  <span class="string">`/physicalPath:&quot;<span class="subst">$&#123;adminPath&#125;</span>&quot;`</span>].join(<span class="string">&#x27; &#x27;</span>));</span><br><span class="line"><span class="keyword">await</span> <span class="built_in">this</span>.execCommand(<span class="string">&#x27;%systemroot%\\system32\\inetsrv\\APPCMD set app &quot;parking-admin-prod/&quot; /applicationPool:parking-admin-prod&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>以上代码没有修改站点绑定的ip，是由于我细节上还没开发完，大家注意一下就可以了。</p>
+<h2 id="安装注册表"><a href="#安装注册表" class="headerlink" title="安装注册表"></a>安装注册表</h2><p>我们在安装软件后，再次打开安装器，需要判断系统是否已经安装，同时，在控制面板的程序和功能中，需要有所体现，并且让用户选择卸载。这些信息也是配置在注册表中的，其中涉及到两个注册表项，<code>HKLM\Software\[AppName]</code>与<code>HKLM\Software\Microsoft\Windows\CurrentVersion\Uninstall\[app name]</code>，前面已经介绍了注册表的操作，这里就不再贴代码了。</p>
+<h2 id="关于angular与node模块"><a href="#关于angular与node模块" class="headerlink" title="关于angular与node模块"></a>关于angular与node模块</h2><p>在使用angular的过程中，发现了一个问题。当我们在node模块方法的事件或者回调中修改Component属性时，发现虽然属性实际值改变了，但由于闭包作用域的改变，页面绑定的内容并没有发生修改。这时就需要把属性赋值放到回调方法或者事件之外进行，需要把异步方法转成同步，同时呢，又不能卡住界面。这里利用async/await语法配合Promise做了一个骚操作，我前面有提到，当然，异步转同步不止这一个办法，但其他方法很容易就会造成阻塞，卡住界面。展示代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private <span class="keyword">async</span> <span class="function"><span class="title">execCommand</span>(<span class="params">cmd: string</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (isDevMode) &#123;</span><br><span class="line">    log(<span class="string">&#x27;执行命令:&#x27;</span> + cmd);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> waitting = <span class="literal">true</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">sleep</span>(<span class="params">ms</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> <span class="built_in">setTimeout</span>(resolve, ms));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> exec = <span class="built_in">this</span>.eleService.childProcess.exec;</span><br><span class="line">  <span class="keyword">const</span> iconv = <span class="built_in">window</span>.require(<span class="string">&#x27;iconv-lite&#x27;</span>);</span><br><span class="line">  <span class="keyword">let</span> out = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">  exec(cmd, &#123; <span class="attr">encoding</span>: <span class="string">&#x27;buffer&#x27;</span>, <span class="attr">shell</span>: <span class="string">&#x27;cmd.exe&#x27;</span> &#125;, <span class="function">(<span class="params">error, stdout, stderr</span>) =&gt;</span> &#123;</span><br><span class="line">    out = iconv.decode(stdout, <span class="string">&#x27;cp936&#x27;</span>);</span><br><span class="line">    <span class="keyword">const</span> err = iconv.decode(stderr, <span class="string">&#x27;cp936&#x27;</span>);</span><br><span class="line">    <span class="built_in">this</span>.appendInstallOutput(out, <span class="string">&#x27;info&#x27;</span>);</span><br><span class="line">    <span class="built_in">this</span>.appendInstallOutput(err, <span class="string">&#x27;error&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (isDevMode()) &#123;</span><br><span class="line">      log(<span class="string">&#x27;output: &#x27;</span> + out);</span><br><span class="line">      log(<span class="string">&#x27;error: &#x27;</span> + err);</span><br><span class="line">    &#125;</span><br><span class="line">    waitting = <span class="literal">false</span>;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">while</span> (waitting) &#123; <span class="keyword">await</span> sleep(<span class="number">1000</span>); &#125;</span><br><span class="line">  <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中循环中的sleep操作设定的延时，我设置了1s，大家可以根据实际情况的预判，适当进行调整。</p>
+<h2 id="界面展示"><a href="#界面展示" class="headerlink" title="界面展示"></a>界面展示</h2><p>最后贴一下界面展示成果<br><img src="/img/park-installer.png" alt="park-installer"></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2018/06/08/develop-a-dotnet-site-installer/" data-id="ckromc9so001538uahmez7e9u" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnetcore/" rel="tag">dotnetcore</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/electron/" rel="tag">electron</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/26/why-i-have-not-given-up-csharp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">我为何还没有放弃C#</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

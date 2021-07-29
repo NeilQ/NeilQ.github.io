@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>开发之短期效率与长期效率 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="工作中接到需求并着手开发时，我们通常会有两种选择，我将这两种方式分别称为追求短期效率与追求长期效率。 短期效率我们假设这样一个场景，当你接到一个开发任务时，上司会交代：三天内必须完成，更有甚者：今天必须完成。可事实上，所有人都清楚，这个任务根本不可能在本周内完成。需求不明确，按照某某某的样子抄；这个地方逻辑可能会有特殊情况，先不管碰到再说；这部分代码很乱，可能性能还很差，不管了先这样。终于，在你吭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发之短期效率与长期效率">
+<meta property="og:url" content="http://neilq.github.io/2017/03/09/short-term-efficiency-and-long-term-efficiency/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="工作中接到需求并着手开发时，我们通常会有两种选择，我将这两种方式分别称为追求短期效率与追求长期效率。 短期效率我们假设这样一个场景，当你接到一个开发任务时，上司会交代：三天内必须完成，更有甚者：今天必须完成。可事实上，所有人都清楚，这个任务根本不可能在本周内完成。需求不明确，按照某某某的样子抄；这个地方逻辑可能会有特殊情况，先不管碰到再说；这部分代码很乱，可能性能还很差，不管了先这样。终于，在你吭">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-03-09T08:28:36.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.689Z">
+<meta property="article:author" content="Chen">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-short-term-efficiency-and-long-term-efficiency" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      开发之短期效率与长期效率
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2017/03/09/short-term-efficiency-and-long-term-efficiency/">
+    <time datetime="2017-03-09T08:28:36.000Z" itemprop="datePublished">3月 9 2017</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>工作中接到需求并着手开发时，我们通常会有两种选择，我将这两种方式分别称为追求短期效率与追求长期效率。</p>
+<h2 id="短期效率"><a href="#短期效率" class="headerlink" title="短期效率"></a>短期效率</h2><p>我们假设这样一个场景，当你接到一个开发任务时，上司会交代：三天内必须完成，更有甚者：今天必须完成。可事实上，所有人都清楚，这个任务根本不可能在本周内完成。需求不明确，按照某某某的样子抄；这个地方逻辑可能会有特殊情况，先不管碰到再说；这部分代码很乱，可能性能还很差，不管了先这样。终于，在你吭哧吭哧加班之后，功能终于完成了，交付测试。我将这种现象称为追求短期效率。</p>
+<p>然而，不幸的是，你或者你的小组，在接下的几周或数月，都要不断为这个早就“完成”的功能上修复bug、调整需求、优化性能。当然，在这段时间里，你不会仅仅只是修补这个功能，你会不断得用一天、三天、一周来完成一个个功能，同时穿插着修补一个个不断积累下来的技术债务。长期以往，上下级便会无法互相信任。你的领导会想：“这小子能力不行，每件事都做得一塌糊涂。算了，现在难招人，先用着吧。”而你会想：“这sb经理屁事不懂，跟他说也不听，自以为是，爱咋咋的，每个单位都会有或多或少的坑，没办法。”哪怕互相之间已经早已不合，仍然磕磕碰碰前进，狼狈为奸。</p>
+<h2 id="长期效率"><a href="#长期效率" class="headerlink" title="长期效率"></a>长期效率</h2><p>让我们再看另一种情况，当你接到一个开发任务时，上司会组织需求方与开发开一个短会，详尽得阐述整个功能的流程、表现，并让你回去写一份开发方案文档，根据功能复杂度，通常整个小组会花一天到一周的时间来商讨、改进这个方案，使用test-driven模式的团队还会同时设计测试用例，使其足够健壮、可扩展，紧接着才进行一周或者一至三个月的开发，在整个周期完成后，几乎不需要再为这个功能操心，它已经真正完成了！我将这种现象称为追求长期效率。</p>
+<p>在这种情形下，整个团队会极其和睦，balance work。经理对手下充满信心：这些家伙能力不错，积极性还高，年底给他们多加点薪。开发者也觉得经理不错，值得跟随。</p>
+<h2 id="如何应对"><a href="#如何应对" class="headerlink" title="如何应对"></a>如何应对</h2><p>大家应该已经从我的文字中看出我的态度了，事实上，通过我的观察，两中方式的开发周期基本是一致的。假如你处在追求长期效率的团队，相信你会异常舒适。那么假如你处在追求短期效率的团队，你应该怎么办，怎么去改变？</p>
+<p>如果你只是一个普通的程序员，你将毫无办法，是的，毫无办法。要么长期忍受，要么弃坑跳槽，及时止损。而假如你凭借自己的技术、能力得到他人的信任，有一定的话语权，那么我建议你试一试将这种情况反转过来，<strong>不积极去改变，你和咸鱼有什么区别</strong>。</p>
+<p>在我过去的两年多时间里，我恰巧经历了这两种公司。</p>
+<p>第一家公司追求长期效率，开发舒适，团队和睦，每什么好说的。</p>
+<p>第二家公司初期则是追求短期效率，在初期阶段，某总监在国庆前夕让我三天完成某一功能。第一天，我便意识到这个功能根本不可能在如此短的时间内完成，三天加班中，我完成了骨架。紧接着，国庆后我与另一位开发花了将近一个月才完成这项功能。那时我只是一个普通程序员，并没有任何办法改变这件事。</p>
+<p>几个月后，由于一些不可描述的原因，上层管理换了。这时，我的技术能力已经得到了团队的认可，具备了一定的话语权，在我的不断安利与上司的支持下，我们小组率先作为试点，组内成员都积极得去尝试敏捷开发，开发初期做更多思考，终于取得了一定的成效，追求更长远的效率。</p>
+<p>然而，几个月后，由于一些不可描述的原因，上层管理又换了，嗯。由于管理理念的差异，渐渐地，迫于压力，团队又进入了追求短期效率的混乱中:)。此时我已升为组长，具有一定的小范围管理权，在这种大环境下，我仍然在开发中坚持稳健，绝不冒进。当我接到一项任务，并且指示一天、三天要完成时，我不会立即含糊指派下去，相反，我都会仔细思考，拆解任务，并将具体设计与关键要素都整理成文档，解释清楚，最终安排各成员去做。显然，这些任务仍然不可能一天或三天完成，但通过显式的文档，说服大家相信，这项任务花这么长时间，值，没有人会指责我。当然，假如我消极处理，把任务往下压，还是得花这么多时间。</p>
+<p><strong>既然我们可以漂亮得活着，为何要蓬头垢面？</strong></p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2017/03/09/short-term-efficiency-and-long-term-efficiency/" data-id="ckromc9tk003938uaddgwcwwh" class="article-share-link">分享到</a>
+        
+        
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2017/04/17/fragments-of-grpc/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          GRPC琐碎
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/11/18/problems-from-mysql5-6-to-mysql5-7/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">mysql5.6 升级到 mysql5.7遇到的问题</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

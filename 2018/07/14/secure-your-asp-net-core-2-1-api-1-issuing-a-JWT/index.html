@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ASP.NET core 2.1 API 认证与授权(1 - 使用JWT) | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近在为API重构认证与授权机制。之前在做api认证时，使用的是自己定义的Bearer token，不是很规范，因此决定使用JWT进行重构，记录一下相关知识点。 Authentication和Authorization首先，我们需要理清一下认证（Authentication）与授权（Authorization）的关系，否则在理解与查找asp.net core认证授权资料时会非常困惑，下面我会统一使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)">
+<meta property="og:url" content="http://neilq.github.io/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="最近在为API重构认证与授权机制。之前在做api认证时，使用的是自己定义的Bearer token，不是很规范，因此决定使用JWT进行重构，记录一下相关知识点。 Authentication和Authorization首先，我们需要理清一下认证（Authentication）与授权（Authorization）的关系，否则在理解与查找asp.net core认证授权资料时会非常困惑，下面我会统一使">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-07-14T06:06:14.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.689Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content="dotnetcore">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-secure-your-asp-net-core-2-1-api-1-issuing-a-JWT" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/">
+    <time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>最近在为API重构认证与授权机制。之前在做api认证时，使用的是自己定义的Bearer token，不是很规范，因此决定使用JWT进行重构，记录一下相关知识点。</p>
+<h2 id="Authentication和Authorization"><a href="#Authentication和Authorization" class="headerlink" title="Authentication和Authorization"></a>Authentication和Authorization</h2><p>首先，我们需要理清一下认证（Authentication）与授权（Authorization）的关系，否则在理解与查找asp.net core认证授权资料时会非常困惑，下面我会统一使用英文Authentication与Authorization，便于理解代码。</p>
+<ul>
+<li>Authentication（认证）是指知道用户的标识。例如佩奇使用她的用户名与密码登录，或者佩奇访问API每次都带着一个加密的token字符串，里面包含着她的个人信息，验证这个信息的过程就叫做Authentication。</li>
+<li>Authorization（授权）是指确定是否允许用户执行某个操作。例如佩奇可能允许查询某个数据，但不能更改这个数据，验证这个权限的过程叫做Authorization。</li>
+</ul>
+<p>在asp.net core 2.1 中，Authentication发生在<code>Middleware</code>层，而Authorization发生在<code>Filter</code>层（可以获得Controller的信息，这是配置权限的关键）。</p>
+<p>Authentication包括以下几种：Basic，Bearer，Digest等等，这里不详细介绍，而我们要讨论的就是Api常用的Bearer认证，默认的，ASP.NET core将会验证http的头信息Authorization，如果值以<code>Bearer</code>开头，那么就是Bearer认证了。</p>
+<h2 id="JWT"><a href="#JWT" class="headerlink" title="JWT"></a>JWT</h2><p><code>JWT(JSON Web Token)</code>是一种用来传输JSON对象的安全标准，例如<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Jon&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;middle_name&quot;</span>: <span class="string">&quot;Who&#x27;s asking?!&quot;</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里不详细介绍JWT标准，有兴趣的朋友自行Google。</p>
+<p><code>Claims</code>是包裹了用户信息的声明，包含了你的用户标识，这些标识决定了你是否允许访问Api，具有哪些操作权限。在上面的例子中，<code>name</code>与<code>middle_name</code>就是Claims声明。</p>
+<p>那么，我们是怎么利用JWT来做API认证的呢？分为以下步骤：</p>
+<ul>
+<li>用户佩奇访问客户端站点，跳转到登录界面</li>
+<li>佩奇提交了她的用户名与密码作为凭证</li>
+<li>客户端站点将凭证提交到Api</li>
+<li>Api验证用户名与密码，给客户端返回一个JWT token</li>
+</ul>
+<p>一旦客户端获得了token，它每次访问Api时都将在头信息里附带token，当Api接受到请求时，验证token是否合法，如果不合法则返回<code>401</code>，客户端收到后跳转到登录页面，如果合法则返回相应的数据。</p>
+<h2 id="如何生成JWT"><a href="#如何生成JWT" class="headerlink" title="如何生成JWT"></a>如何生成JWT</h2><p>如果你使用了<code>Identity Server 4</code>，那么你可以很简单得生成token，但这里我们要介绍的是不使用第三方解决方案时，怎么去操作。</p>
+<p>首先，我们需要一个controller action来发放token：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">AllowAnonymous</span>]</span><br><span class="line">[<span class="meta">HttpPost</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> IActionResult <span class="title">RequestToken</span>(<span class="params">[FromBody] TokenRequest request</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (request.Username == <span class="string">&quot;Jon&quot;</span> &amp;&amp; request.Password == <span class="string">&quot;Not for production use, DEMO ONLY!&quot;</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> claims = <span class="keyword">new</span>[]</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">new</span> Claim(ClaimTypes.Name, request.Username)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> key = <span class="keyword">new</span> SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration[<span class="string">&quot;SecurityKey&quot;</span>]));</span><br><span class="line">        <span class="keyword">var</span> creds = <span class="keyword">new</span> SigningCredentials(key, SecurityAlgorithms.HmacSha256);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> token = <span class="keyword">new</span> JwtSecurityToken(</span><br><span class="line">            issuer: <span class="string">&quot;yourdomain.com&quot;</span>,</span><br><span class="line">            audience: <span class="string">&quot;yourdomain.com&quot;</span>,</span><br><span class="line">            claims: claims,</span><br><span class="line">            expires: DateTime.Now.AddMinutes(<span class="number">30</span>),</span><br><span class="line">            signingCredentials: creds);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Ok(<span class="keyword">new</span></span><br><span class="line">        &#123;</span><br><span class="line">            token = <span class="keyword">new</span> JwtSecurityTokenHandler().WriteToken(token)</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> BadRequest(<span class="string">&quot;Could not verify username and password&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>代码很简单，通过用户名与密码获得用户信息，然后指定密钥与加密方式，通过内置的方法生成token，其中</p>
+<ul>
+<li><code>issuer</code>表示token 的发放者。</li>
+<li><code>audience</code>表示接收者，如果你有多个客户端访问Api，可以利用这个字段区分不同的客户端。</li>
+<li><code>expires</code>表示token的过期时间，防止token被盗后被恶意使用，过期后需要重新申请。</li>
+<li><code>claims</code>包含了用户的标识</li>
+</ul>
+<h2 id="你有了JWT，接下来呢？"><a href="#你有了JWT，接下来呢？" class="headerlink" title="你有了JWT，接下来呢？"></a>你有了JWT，接下来呢？</h2><p>现在你的客户端已经有了token，并且每次访问都会包含在头信息里，<code>Authorization: Bearer myToken</code>。</p>
+<p>但你的Api仍然是面向所有人的，我们需要做一些工作，来使Api收到请求后自动验证token。</p>
+<h3 id="为Api-controller添加认证需求"><a href="#为Api-controller添加认证需求" class="headerlink" title="为Api controller添加认证需求"></a>为Api controller添加认证需求</h3><p>我们需要用<code>[Authorize]</code>属性使得api要求用户认证：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">Authorize</span>]</span><br><span class="line">[<span class="meta">Route(<span class="meta-string">&quot;api&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ApiController</span> : <span class="title">Controller</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">HttpGet(<span class="meta-string">&quot;Test&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> IActionResult <span class="title">Test</span>(<span class="params"></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Ok(<span class="string">&quot;Super secret content, I hope you&#x27;ve got clearance for this...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// rest of controller goes here</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>加上这个属性后，每次api收到请求都会进行用户认证，如果没有token，就会返回401。</p>
+<h3 id="JWT认证配置"><a href="#JWT认证配置" class="headerlink" title="JWT认证配置"></a>JWT认证配置</h3><p>接着，我们需要在Startup中启用JWT认证，并配置一些信息。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder app, IHostingEnvironment env</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (env.IsDevelopment())</span><br><span class="line">    &#123;</span><br><span class="line">        app.UseDeveloperExceptionPage();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    app.UseAuthentication();</span><br><span class="line">	</span><br><span class="line">    app.UseMvc();</span><br><span class="line">    app.UseStaticFiles();</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码表示我们已经启用了用户认证，但没有指定如何认证，需要将JWT认证模式加进去：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)</span><br><span class="line">        .AddJwtBearer(options =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            options.TokenValidationParameters = <span class="keyword">new</span> TokenValidationParameters</span><br><span class="line">            &#123;</span><br><span class="line">                ValidateIssuer = <span class="literal">true</span>,</span><br><span class="line">                ValidateAudience = <span class="literal">true</span>,</span><br><span class="line">                ValidateLifetime = <span class="literal">true</span>,</span><br><span class="line">                ValidateIssuerSigningKey = <span class="literal">true</span>,</span><br><span class="line">                ValidIssuer = <span class="string">&quot;yourdomain.com&quot;</span>,</span><br><span class="line">                ValidAudience = <span class="string">&quot;yourdomain.com&quot;</span>,</span><br><span class="line">                IssuerSigningKey = <span class="keyword">new</span> SymmetricSecurityKey(</span><br><span class="line">                    Encoding.UTF8.GetBytes(_configuration[<span class="string">&quot;SecurityKey&quot;</span>]))</span><br><span class="line">            &#125;;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    services.AddMvc();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此，我们已经完成的JWT认证的启用。</p>
+<h3 id="JWT认证过程原理"><a href="#JWT认证过程原理" class="headerlink" title="JWT认证过程原理"></a>JWT认证过程原理</h3><p>可能有些同学会想知道ASP.NET core是如何进行认证过程的，为什么配置完这些内容就完成认证了，有兴趣同学可以阅读一下<a target="_blank" rel="noopener" href="https://github.com/aspnet/Security/tree/master/src">Microsofr.AspNetCore.Authentication的源码</a>。</p>
+<p>通过代码我们可以知道，这里有一个<code>JwtBearerHandler</code>类，用来专门处理JWT认证，它将提取Request的Authorization头信息，验证值是否以<code>Bearer</code>开头，然后获得具体的token，对token进行解密，最后验证是否合法，如果合法，将提取的用户信息塞到HttpContext.User中，我们可以注入<code>HttpContextAccessor</code>，这样在任何地方就可以通过依赖获得HttpContext.User，得到用户的一切信息。</p>
+<p>那么，ASP.NET core是什么时候将认证交由<code>JwtBearerHandler</code>处理的呢？文章的开头我们提到Authentication是在<code>Middleware</code>层进行处理，这里就有一个内置的<code>AuthenticationMiddleware</code>。当收到请求后，它找出你所配置的所有认证方式，如果你的<code>[Authorize]</code>属性指定了具体的方式，如<code>[Authorize(AuthenticationSchema=&#39;Bearer&#39;)]</code>，它会找到指定的<code>AuthenticationHandler</code>，交由它处理，如果你没有指定，它将交由默认的<code>AuthenticationHandler</code>处理，以上的例子，我们已经配置了默认的认证方式，<code>services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)</code>，其中<code>JwtBearerDefaults.AuthenticationScheme</code>就是我们配置的默认认证方式，它的值就是<code>Bearer</code>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>现在，我们已经知道了如何生成以及配置JWT认证使其工作，那么如果我们的Api需要多种认证方式该怎么办呢？下一篇文章我们将具体讨论如果自定义<code>AuthenticationHandler</code>以及如何混合多种认证方式。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" data-id="ckromc9tj003638ua5idz90ht" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dotnetcore/" rel="tag">dotnetcore</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Asp.net core 2 如何设置SnakeCase形式的QueryString参数
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/06/08/develop-a-dotnet-site-installer/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">开发一个dotnet core站点安装器</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

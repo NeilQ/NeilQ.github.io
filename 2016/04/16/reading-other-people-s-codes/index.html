@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>知之不如好之：为什么要阅读开源代码 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从业软件行业三年，发现身边的很多程序员都讨厌阅读代码，哪怕他们都很喜欢写代码。确实写代码就像画一副作品，是一件愉快有趣的事，而阅读他人的代码，则显得非常艰难、无聊。哪怕是阅读自己几个月前写的代码，都有可能是一种折磨。所以，为什么我们要浪费几个小时、几天、几周来读别人的代码，我们可以用这些时间写一些对我们来说very awesome的代码。 对于我个人，就很喜欢阅读他人的优秀代码。或者说一开始只是为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知之不如好之：为什么要阅读开源代码">
+<meta property="og:url" content="http://neilq.github.io/2016/04/16/reading-other-people-s-codes/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="从业软件行业三年，发现身边的很多程序员都讨厌阅读代码，哪怕他们都很喜欢写代码。确实写代码就像画一副作品，是一件愉快有趣的事，而阅读他人的代码，则显得非常艰难、无聊。哪怕是阅读自己几个月前写的代码，都有可能是一种折磨。所以，为什么我们要浪费几个小时、几天、几周来读别人的代码，我们可以用这些时间写一些对我们来说very awesome的代码。 对于我个人，就很喜欢阅读他人的优秀代码。或者说一开始只是为">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-04-16T07:00:49.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.687Z">
+<meta property="article:author" content="Chen">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-reading-other-people-s-codes" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      知之不如好之：为什么要阅读开源代码
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2016/04/16/reading-other-people-s-codes/">
+    <time datetime="2016-04-16T07:00:49.000Z" itemprop="datePublished">4月 16 2016</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>从业软件行业三年，发现身边的很多程序员都讨厌阅读代码，哪怕他们都很喜欢写代码。确实写代码就像画一副作品，是一件愉快有趣的事，而阅读他人的代码，则显得非常艰难、无聊。哪怕是阅读自己几个月前写的代码，都有可能是一种折磨。所以，为什么我们要浪费几个小时、几天、几周来读别人的代码，我们可以用这些时间写一些对我们来说very awesome的代码。</p>
+<p>对于我个人，就很喜欢阅读他人的优秀代码。或者说一开始只是为了生存，后来出于习惯，最后渐渐喜欢上了这件事。大家发现了没有？把妹其实也是一样，要经常出现在她的视野里、生活中，当她的生活、娱乐、工作中到处都被你占满，或许她就不愿意再过没有你的日子了。</p>
+<p>扯远了，扯回来。</p>
+<p>最初阅读别人的代码，我只是为了生存，不断学习知识，好让自己快速增值，总之，因为穷。实习的时候，当我听到某某实习生写的代码很好，被同事、导师表扬，我总会不声不响弄来他的作品学习。正式工作后，当同事实现了一种我所未知的牛逼功能，我总会阅读他的代码，向他请教。再后来github逐渐成为我编程学习中不可或缺的角色。那么，阅读这些优秀的代码，给我带来了什么益处？能对大家造成什么影响？</p>
+<h3 id="增长见识"><a href="#增长见识" class="headerlink" title="增长见识"></a>增长见识</h3><p>当我们越来越多得阅读优秀代码，我们的知识将会不断地、缓慢地增长。是的，缓慢地增长。我们不可能因为读了某段代码，从此封神，但它能助我们成神。每位热爱这一行的程序员都会希望成为杰出的工程师，而成为大师最有效的方法就是：找到大师，跟随大师，模仿大师。我们不可能飘洋过海找到github上Top10的大师缠着他们指导我们如何将代码写得优雅，我们也不可能让那些优秀的同事放下工作，放下生活，放下娱乐教我们编程，所以阅读他们的代码成了我们学习他们的知识的唯一途径。阅读风格迥异的优秀代码使我们获得知识，增长见识。</p>
+<h3 id="富有创造力"><a href="#富有创造力" class="headerlink" title="富有创造力"></a>富有创造力</h3><p>阅读优秀的代码可以让我们富有创造力。可能有人会奇怪，借鉴别人的代码，应该获得抄袭力才对，怎么会是创造力？我们来看《黑客与画家》中的一段话：</p>
+<blockquote>
+<p>创造优美事物的方式往往不是从头做起，而是在现有成果的基础上做一些小小的调整，或者将已有的观点用比较新的方式组合起来。</p>
+</blockquote>
+<p>这句话在历史中就已经得到了验证。优秀代码中的一些思想，往往会使我们醍醐灌顶，如果我们再进一步思考，就会对我们的编程能力带来极大的提升，使我们更有创造力。我们知道，将颜料中的不同成份进行优美得组合，可以形成一件巨作，同样的，我们将借鉴来的不同的编程思想进行组合，也有可能创作出优秀的作品，也有可能得到你想要的awesome的代码。但首先，米开朗基罗在大教堂顶上创作的时候，不也是必须得精通不同颜料的成份吗？</p>
+<p>举个个人的例子，前段时间工作中的一个复杂的业务逻辑，我将策略模式、依赖注入、事件循环机制进行组合，写出了自认为优雅的代码，满足功能又使其富有扩展性，得到了上司的认可。而这几种思想，就是在前同事的代码、shadowsocks源码中学来的。当然，得到同事认可并不意味着我是大牛，但至少，我走在了这条路上。</p>
+<h3 id="自信心"><a href="#自信心" class="headerlink" title="自信心"></a>自信心</h3><p>这一点我想是毋庸置疑的，当你富有见识，富有创造力的时候，你必将是自信的。当你面对一项艰巨的任务，你在阅读优秀代码过程中获得的知识，必将带给你克服它的信心。同时，自信心也会给你的生活、工作带来极大的优势与便利。</p>
+<p>如此多的好处等着你，还犹豫什么呢？赶紧拿起手中的电话。。。不对，我想说的是，“知之者不如好之者”，如果你热爱编程，那就一定要阅读优秀开源代码。“学而不知则惘”，阅读的同时，也必须思考，攫取出其中的思想为己所用。</p>
+<p>那么，面对github上如此多玲琅满目的优秀开源作品，我们要如何进行有效得阅读呢？这都要问，难道还要老师一口一口喂吗？</p>
+<p>好，老师喂。</p>
+<p>下回再喂。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2016/04/16/reading-other-people-s-codes/" data-id="ckromc9td002s38uablhv6a4w" class="article-share-link">分享到</a>
+        
+        
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2016/05/07/how-to-write-unit-test/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          如何写好单元测试
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/01/23/AOP-programming-with-Unity-3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">利用Unity进行AOP编程: 策略注入（三)</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>

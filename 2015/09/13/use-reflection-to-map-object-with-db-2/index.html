@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用反射映射数据库对象(二) | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在上一篇文章里，我们里用反射，将数据库的查询结果集映射到对象中，以减少代码。现在我们就利用相同的原理来完成更新记录的操作。 更新记录时，我们需要知道表名，主键名，主键值，以及需要更新的字段信息。最初阶段，这些信息我们只要通过参数传递到方法中。1234public int Update(string tableName, string primaryKeyName, object entity)&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用反射映射数据库对象(二)">
+<meta property="og:url" content="http://neilq.github.io/2015/09/13/use-reflection-to-map-object-with-db-2/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="在上一篇文章里，我们里用反射，将数据库的查询结果集映射到对象中，以减少代码。现在我们就利用相同的原理来完成更新记录的操作。 更新记录时，我们需要知道表名，主键名，主键值，以及需要更新的字段信息。最初阶段，这些信息我们只要通过参数传递到方法中。1234public int Update(string tableName, string primaryKeyName, object entity)&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-09-13T05:27:42.000Z">
+<meta property="article:modified_time" content="2021-07-29T07:33:55.692Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content=".NET">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        51
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        31
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-use-reflection-to-map-object-with-db-2" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      利用反射映射数据库对象(二)
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2015/09/13/use-reflection-to-map-object-with-db-2/">
+    <time datetime="2015-09-13T05:27:42.000Z" itemprop="datePublished">9月 13 2015</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>在上一篇文章里，我们里用反射，将数据库的查询结果集映射到对象中，以减少代码。现在我们就利用相同的原理来完成更新记录的操作。</p>
+<p>更新记录时，我们需要知道表名，主键名，主键值，以及需要更新的字段信息。最初阶段，这些信息我们只要通过参数传递到方法中。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">Update</span>(<span class="params"><span class="built_in">string</span> tableName, <span class="built_in">string</span> primaryKeyName, <span class="built_in">object</span> entity</span>)</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这时我们需要做的就是拼接sql语句，从entity对象中反射出属性名称更新到数据库中，当然，entity中的属性必须与数据库字段名称对应，并且必须包含主键。代码还是比较简单的:<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">public int Update(string tableName, string primaryKeyName, object entity)</span><br><span class="line">&#123;</span><br><span class="line">    using (var conn = new SqlConnection(SqlHelper.ConnectionString))</span><br><span class="line">    &#123;</span><br><span class="line">        conn.Open();</span><br><span class="line">        using (var cmd = conn.CreateCommand())</span><br><span class="line">        &#123;</span><br><span class="line">            var sb = new StringBuilder();</span><br><span class="line">            var index = 0;</span><br><span class="line">            var props = entity.GetType().GetProperties().Where(prop =&gt; prop.CanRead);</span><br><span class="line">            object primaryKeyValue = null;</span><br><span class="line"></span><br><span class="line">            foreach (var p in props)</span><br><span class="line">            &#123;</span><br><span class="line">                // Don&#x27;t update the primary key, but grab the value if we don&#x27;t have it</span><br><span class="line">                if (String.Compare(p.Name, primaryKeyName, StringComparison.Ordinal) == 0)</span><br><span class="line">                &#123;</span><br><span class="line">                    primaryKeyValue = p.GetValue(entity);</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // Build the sql</span><br><span class="line">                if (index &gt; 0)</span><br><span class="line">                &#123;</span><br><span class="line">                    sb.Append(&quot;, &quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                sb.AppendFormat(&quot;[&#123;0&#125;] = @&#123;1&#125;&quot;, p.Name, index++);</span><br><span class="line"></span><br><span class="line">                // Store the parameter in the command</span><br><span class="line">                AddParam(cmd, p.GetValue(entity));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            cmd.CommandText = string.Format(&quot;UPDATE [&#123;0&#125;] SET &#123;1&#125; WHERE [&#123;2&#125;] = @&#123;3&#125;&quot;,</span><br><span class="line">                tableName, sb, primaryKeyName, index++);</span><br><span class="line"></span><br><span class="line">            // Throw exception if primary key not mapped.</span><br><span class="line">            // It&#x27;ll be dangerous.</span><br><span class="line">            if (primaryKeyValue == null)</span><br><span class="line">            &#123;</span><br><span class="line">                throw new ArgumentException(&quot;primary key not mapped.&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            AddParam(cmd, primaryKeyValue);</span><br><span class="line"></span><br><span class="line">            var retv = cmd.ExecuteNonQuery();</span><br><span class="line">            return retv;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static void AddParam(IDbCommand cmd, object item)</span><br><span class="line">&#123;</span><br><span class="line">    // Support passed in parameters</span><br><span class="line">    var idbParam = item as IDbDataParameter;</span><br><span class="line">    if (idbParam != null)</span><br><span class="line">    &#123;</span><br><span class="line">        idbParam.ParameterName = cmd.Parameters.Count.ToString();</span><br><span class="line">        cmd.Parameters.Add(idbParam);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var p = cmd.CreateParameter();</span><br><span class="line">    p.ParameterName = cmd.Parameters.Count.ToString();</span><br><span class="line">    if (item == null)</span><br><span class="line">    &#123;</span><br><span class="line">        p.Value = DBNull.Value;</span><br><span class="line">    &#125;</span><br><span class="line">    else</span><br><span class="line">    &#123;</span><br><span class="line">        var t = item.GetType();</span><br><span class="line">        if (t.IsEnum)</span><br><span class="line">        &#123;</span><br><span class="line">            p.Value = (int)item;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (t == typeof(Guid))</span><br><span class="line">        &#123;</span><br><span class="line">            p.Value = item.ToString();</span><br><span class="line">            p.DbType = DbType.String;</span><br><span class="line">            p.Size = 40;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (t == typeof(string))</span><br><span class="line">        &#123;</span><br><span class="line">            p.Size = Math.Max((item as string).Length + 1, 4000);</span><br><span class="line">            p.Value = item;</span><br><span class="line">        &#125;</span><br><span class="line">        else if (t == typeof(bool))</span><br><span class="line">        &#123;</span><br><span class="line">            p.Value = ((bool)item) ? 1 : 0;</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        &#123;</span><br><span class="line">            p.Value = item;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cmd.Parameters.Add(p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样，我们在写更新记录时，只需要一行代码就行了:<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Update(<span class="string">&quot;User&quot;</span>, <span class="string">&quot;Id&quot;</span>, user);</span><br></pre></td></tr></table></figure></p>
+<p>大家应该能注意到，以上代码中entity参数类型是object，而不是泛型T等具体的类型，这样做可以使之支持匿名类型，当我们只需要更新数据库的某一列时就尤为方便:<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Update(<span class="string">&quot;User&quot;</span>, <span class="string">&quot;id&quot;</span>, <span class="keyword">new</span> &#123; Id=<span class="number">1</span>, Name=<span class="string">&quot;Kitty&quot;</span> &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>到这里还没有结束，因为我们每次更新时都需要传入表名，主键名，最理想的情况是我们只需要传入user对象就可以了。那么我们通过什么来告诉方法表名与主键名称呢？同样是反射。首先我们得找个地方定义User类对应的表名、主键名，这里我们参考其他ORM框架利用.NET的自定义Attribute，见代码:<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> Specify the table name of a data class</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">[<span class="meta">AttributeUsage(AttributeTargets.Class)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TableNameAttribute</span> : <span class="title">Attribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TableNameAttribute</span>(<span class="params"><span class="built_in">string</span> tableName</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        Value = tableName;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Value &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> Specific the primary key of a data class </span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">[<span class="meta">AttributeUsage(AttributeTargets.Class)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">PrimaryKeyAttribute</span> : <span class="title">Attribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PrimaryKeyAttribute</span>(<span class="params"><span class="built_in">string</span> primaryKey</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        Value = primaryKey;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Value &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[<span class="meta">TableName(<span class="meta-string">&quot;User&quot;</span>)</span>]</span><br><span class="line">[<span class="meta">PrimaryKey(<span class="meta-string">&quot;Id&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Int Id &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Age &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Gender &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Address &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">Update</span>&lt;<span class="title">T</span>&gt;(<span class="params">T entity</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> t = <span class="keyword">typeof</span>(T);</span><br><span class="line">    <span class="comment">// Get the table name</span></span><br><span class="line">    <span class="keyword">var</span> a = t.GetCustomAttributes(<span class="keyword">typeof</span>(TableNameAttribute), <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">var</span> tableName = a.Length == <span class="number">0</span> ? t.Name : (a[<span class="number">0</span>] <span class="keyword">as</span> TableNameAttribute).Value;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get the primary key</span></span><br><span class="line">    a = t.GetCustomAttributes(<span class="keyword">typeof</span>(PrimaryKeyAttribute), <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">var</span> primaryKeyName = a.Length == <span class="number">0</span> ? <span class="string">&quot;ID&quot;</span> : (a[<span class="number">0</span>] <span class="keyword">as</span> PrimaryKeyAttribute).Value;</span><br><span class="line">    <span class="keyword">return</span> Update(tableName, primaryKeyName, entity);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最终，我们更新数据的代码就变成了 Update(user), 而不需要每张表都去大段地拼接字符串了。</p>
+<p>另外，以上代码还是可以优化的。重载代码时，我们对T entity类型反射了两次，假如Update方法是写在Dal类中，我们可以为之添加两个readonly字段，并在类型构造器中将其赋值，这样每个Dal类在第一次调用时，就将表名，主键名永久保存了。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DalBase</span>&lt;<span class="title">T</span>&gt; <span class="keyword">where</span> <span class="title">T</span> : <span class="keyword">class</span>, <span class="title">new</span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">string</span> TableName;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="built_in">string</span> PrimaryKeyName;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="title">DalBase</span>(<span class="params"></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> t = <span class="keyword">typeof</span>(T);</span><br><span class="line">        <span class="comment">// Get the table name</span></span><br><span class="line">        <span class="keyword">var</span> a = t.GetCustomAttributes(<span class="keyword">typeof</span>(TableNameAttribute), <span class="literal">true</span>);</span><br><span class="line">        TableName = a.Length == <span class="number">0</span> ? t.Name : (a[<span class="number">0</span>] <span class="keyword">as</span> TableNameAttribute).Value;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Get the primary key</span></span><br><span class="line">        a = t.GetCustomAttributes(<span class="keyword">typeof</span>(PrimaryKeyAttribute), <span class="literal">true</span>);</span><br><span class="line">        PrimaryKeyName = a.Length == <span class="number">0</span> ? <span class="string">&quot;ID&quot;</span> : (a[<span class="number">0</span>] <span class="keyword">as</span> PrimaryKeyAttribute).Value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，相信大家已经可以自己写Insert与Delete方法了。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2015/09/13/use-reflection-to-map-object-with-db-2/" data-id="ckromc9tp003m38ua2hwp3h52" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET/" rel="tag">.NET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+    <a href="/2015/10/31/AOP-programming-with-Unity-1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          利用Unity进行AOP编程: 概念介绍（一)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/21/Deploy-nodejs-app-to-docker/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">在Docker中部署nodejs应用</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></p>
+              <p class="item-title"><a href="/2018/04/26/why-i-have-not-given-up-csharp/" class="title">我为何还没有放弃C#</a></p>
+              <p class="item-date"><time datetime="2018-04-26T02:16:01.000Z" itemprop="datePublished">4月 26 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 16.67px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 13.33px;">C#</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 13.33px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 16.67px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 13.33px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 13.33px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 20px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 13.33px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 13.33px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
