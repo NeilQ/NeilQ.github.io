@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>LoT设备分布式一致性处理实践 - 本地消息表 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近工作中我们新增了一批人脸识别设备，该设备支持http commet轮询以及MQTT的方式对接，综合各方面的优劣后，最终我们准备采用MQTT的方式来对接，同时我们也不可避免得遇到了分布式一致性的问题，在此做一次实践纪录。 在系统使用过程中，我们需要根据各自的权限设置，将系统中人员的白名单下发到不同的设备，后台系统通过MQTT将消息下发到设备，设备再通过MQTT将结果反馈到系统。同时因为设备的性能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LoT设备分布式一致性处理实践 - 本地消息表">
+<meta property="og:url" content="http://neilq.github.io/2022/02/18/a-practice-for-distributed-transaction-acid-database/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="最近工作中我们新增了一批人脸识别设备，该设备支持http commet轮询以及MQTT的方式对接，综合各方面的优劣后，最终我们准备采用MQTT的方式来对接，同时我们也不可避免得遇到了分布式一致性的问题，在此做一次实践纪录。 在系统使用过程中，我们需要根据各自的权限设置，将系统中人员的白名单下发到不同的设备，后台系统通过MQTT将消息下发到设备，设备再通过MQTT将结果反馈到系统。同时因为设备的性能">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-18T06:49:30.000Z">
+<meta property="article:modified_time" content="2022-02-18T06:53:26.979Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content=".NET">
+<meta property="article:tag" content="Web Api">
+<meta property="article:tag" content="CAP">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        52
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        32
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-a-practice-for-distributed-transaction-acid-database" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      LoT设备分布式一致性处理实践 - 本地消息表
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2022/02/18/a-practice-for-distributed-transaction-acid-database/">
+    <time datetime="2022-02-18T06:49:30.000Z" itemprop="datePublished">2月 18 2022</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>最近工作中我们新增了一批人脸识别设备，该设备支持<code>http commet轮询</code>以及<code>MQTT</code>的方式对接，综合各方面的优劣后，最终我们准备采用MQTT的方式来对接，同时我们也不可避免得遇到了分布式一致性的问题，在此做一次实践纪录。</p>
+<p>在系统使用过程中，我们需要根据各自的权限设置，将系统中人员的白名单下发到不同的设备，后台系统通过<code>MQTT</code>将消息下发到设备，设备再通过<code>MQTT</code>将结果反馈到系统。同时因为设备的性能原因，有一些限制，设备不能在短时间内处理过多的消息，如果我们一下子把所有消息都通过<code>MQTT</code>压下去，会造成设备出现不可预期的异常，比如结果反馈延时、心跳包延时等问题。因此我们的后台系统需要处理异步消息结果一致性问题以及消息流量控制，这里我们通过<code>本地消息表</code>来实现。</p>
+<h2 id="本地消息表"><a href="#本地消息表" class="headerlink" title="本地消息表"></a>本地消息表</h2><p>本地消息表这个方案最初是ebay提出的，此方案的核心是将需要分布式处理的任务通过消息日志的方式来异步执行。消息日志可以存储到本地文本、数据库或消息队列，再通过业务规则自动或人工发起重试。</p>
+<p>具体怎么做呢？消息生产方（也就是发起方），需要建一个消息表，并记录消息发送状态，然后消息会经过MQ发送到消息的消费方。如果消息发送失败，会进行重试发送。如果设备处理成功了，通知系统，我们就将业务数据标记为成功，同时删除本地消息。那如果设备处理成功了，但是在标记业务数据的时候后台服务崩溃了怎么办呢？由于设备处理白名单是幂等的，也就是说假如后台服务奔溃了，等它再次启动的时候，会重复下发一次，这时我们损失的是性能，但是最终一致性结果不会改变，所以这时我们选择牺牲一点性能。</p>
+<h2 id="本地消息表实现"><a href="#本地消息表实现" class="headerlink" title="本地消息表实现"></a>本地消息表实现</h2><p>准备本地消息表实体以及数据存储接口</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MediumMessage</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> DbId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125; = <span class="literal">default</span>!;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 业务原始数据</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Origin &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Topic &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> MessageId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 消息内容</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Message &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> DateTime AddAt &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> DateTime? PublishAt &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 发送次数</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Tries &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> StatusName StatusName &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> StatusName</span><br><span class="line">&#123;</span><br><span class="line">    Failed = <span class="number">-1</span>,</span><br><span class="line">    Scheduled,</span><br><span class="line">    Published</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IDataStore</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 存储白名单消息</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function">MediumMessage <span class="title">StoreWhitelistMessage</span>(<span class="params"><span class="built_in">string</span> messageId, <span class="built_in">string</span> topic, <span class="built_in">string</span> message, WhitelistTask task,</span></span></span><br><span class="line"><span class="params"><span class="function">        StatusName status</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 根据messageId获取消息</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function">MediumMessage <span class="title">GetMessage</span>(<span class="params"><span class="built_in">string</span> messageId</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 移除消息</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">RemoveMessage</span>(<span class="params"><span class="built_in">string</span> messageId</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 白名单消息是否空</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="built_in">bool</span> <span class="title">IsWhitelistEmpty</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 是否存在已发送消息的topic</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="built_in">bool</span> <span class="title">ExistPublishedTopic</span>(<span class="params"><span class="built_in">string</span> topic</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 获取需要重试发送的消息</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function">IEnumerable&lt;MediumMessage&gt; <span class="title">GetMessagesOfNeedRetry</span>(<span class="params"></span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 更新发布状态</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">ChangePublishState</span>(<span class="params"><span class="built_in">string</span> messageId</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 删除过期的消息</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="function"><span class="built_in">int</span> <span class="title">DeleteExpiredMessages</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>项目初期，我们决定将数据存在内存中，所以目前我们是通过将消息存储在<code>ConcurrentDictionary</code>中实现的，虽然<code>ConcurrentDictionary</code>是线程安全的，但仅仅是在不同消息实体之间加锁，我们在更新单个消息的多个字段内容时，还是要注意配合其他混合锁使用。</p>
+<h2 id="后台任务实现"><a href="#后台任务实现" class="headerlink" title="后台任务实现"></a>后台任务实现</h2><p>后台任务部分关键代码节选：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FaceWhitelistWorker</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> MqttClientService _mqttService;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger _logger;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IApiClient _api;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IDataStore _dataStore;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FaceWhitelistWorker</span>(<span class="params">MqttClientService mqttService,</span></span></span><br><span class="line"><span class="params"><span class="function">        ILogger&lt;FaceWhitelistWorker&gt; logger,</span></span></span><br><span class="line"><span class="params"><span class="function">        IApiClient api,</span></span></span><br><span class="line"><span class="params"><span class="function">        IDataStore dataStore</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _mqttService = mqttService;</span><br><span class="line">        _logger = logger;</span><br><span class="line">        _api = api;</span><br><span class="line">        _dataStore = dataStore;</span><br><span class="line">    &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">StartAsync</span>(<span class="params">CancellationToken cancellationToken</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">await</span> StartSchedule(cancellationToken);</span><br><span class="line">        <span class="keyword">await</span> StartPublish(cancellationToken);</span><br><span class="line">        <span class="keyword">await</span> StartClear(cancellationToken);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Task <span class="title">StartClear</span>(<span class="params">CancellationToken ct</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="built_in">int</span> retryInterval = <span class="number">3000</span>;</span><br><span class="line">        <span class="keyword">return</span> Task.Factory.StartNew(<span class="keyword">async</span> () =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (ct.IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">var</span> count = _dataStore.DeleteExpiredMessages();</span><br><span class="line">                <span class="keyword">if</span> (count &gt; <span class="number">0</span>)  _logger.LogDebug(<span class="string">&quot;Cleared &#123;Count&#125; messages&quot;</span>, count);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 略：标记业务数据结果</span></span><br><span class="line">                <span class="keyword">await</span> Task.Delay(retryInterval, ct);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Task <span class="title">StartPublish</span>(<span class="params">CancellationToken ct</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> <span class="built_in">int</span> retryInterval = <span class="number">500</span>;</span><br><span class="line">        <span class="keyword">return</span> Task.Factory.StartNew(<span class="keyword">async</span> () =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">await</span> Task.Delay(<span class="number">5000</span>, ct);</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (ct.IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">if</span> (_mqttService.MqttClient <span class="keyword">is</span> <span class="keyword">not</span> &#123; IsConnected: <span class="literal">true</span> &#125;)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">await</span> Task.Delay(<span class="number">5000</span>, ct);</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">var</span> mediumMessages = _dataStore.GetMessagesOfNeedRetry();</span><br><span class="line">                <span class="keyword">if</span> (mediumMessages == <span class="literal">null</span> || !mediumMessages.Any())</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">await</span> Task.Delay(retryInterval, ct);</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">foreach</span> (<span class="keyword">var</span> mediumMessage <span class="keyword">in</span> mediumMessages)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (_dataStore.ExistPublishedTopic(mediumMessage.Topic))</span><br><span class="line">                    &#123;</span><br><span class="line">                        _logger.LogDebug(<span class="string">&quot;Skip message &#123;Id&#125; with topic &#123;Topic&#125;&quot;</span>, mediumMessage.MessageId,</span><br><span class="line">                            mediumMessage.Topic);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span></span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">var</span> mqttMessage = <span class="keyword">new</span> MqttApplicationMessageBuilder()</span><br><span class="line">                            .WithTopic(mediumMessage.Topic)</span><br><span class="line">                            .WithPayload(mediumMessage.Message)</span><br><span class="line">                            .WithAtMostOnceQoS().Build();</span><br><span class="line">                        <span class="keyword">await</span> _mqttService.PublishAsync(mqttMessage);</span><br><span class="line">                        _dataStore.ChangePublishState(mediumMessage.MessageId);</span><br><span class="line">                        _logger.LogDebug(<span class="string">&quot;Publish message &#123;Id&#125; with topic &#123;Topic&#125;&quot;</span>, mediumMessage.MessageId,</span><br><span class="line">                            mediumMessage.Topic);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">await</span> Task.Delay(retryInterval, ct);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Task <span class="title">StartSchedule</span>(<span class="params">CancellationToken ct</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Task.Factory.StartNew(<span class="keyword">async</span> () =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">const</span> <span class="built_in">int</span> waitInterval = <span class="number">5000</span>;</span><br><span class="line">            <span class="keyword">await</span> Task.Delay(waitInterval, ct); <span class="comment">// 延迟5s等待Mqtt连接</span></span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (ct.IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line">                <span class="keyword">if</span> (_mqttService.MqttClient <span class="keyword">is</span> <span class="keyword">not</span> &#123; IsConnected: <span class="literal">true</span> &#125;)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">await</span> Task.Delay(waitInterval, ct); <span class="comment">// 等待Mqtt连接</span></span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (ct.IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (!_dataStore.IsWhitelistEmpty())</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">await</span> Task.Delay(waitInterval, ct); <span class="comment">// 等待处理现有白名单</span></span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                Pageable&lt;WhitelistTask&gt; page = <span class="literal">null</span>;</span><br><span class="line">                <span class="comment">// 略：获取白名单任务，没次拉取数量根据实际情况而定</span></span><br><span class="line">               </span><br><span class="line">                <span class="keyword">if</span> (page?.Data == <span class="literal">null</span> || page.Data.Count == <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">await</span> Task.Delay(<span class="number">10000</span>, ct); <span class="comment">// 无白名单任务，等待10s</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    _logger.LogDebug(<span class="string">&quot;Fetched whitelist tasks from api, count:&#123;Count&#125;&quot;</span>, page.Data.Count());</span><br><span class="line">                    <span class="keyword">foreach</span> (<span class="keyword">var</span> task <span class="keyword">in</span> page.Data)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">if</span> (ct.IsCancellationRequested) <span class="keyword">return</span>;</span><br><span class="line">                        <span class="keyword">if</span> (task.Action == WhitelistTaskAction.Delete)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">await</span> ProcessDeleteAction(task);</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">else</span> <span class="keyword">if</span> (task.Action == WhitelistTaskAction.Add)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">await</span> ProcessAddAction(task);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ct, TaskCreationOptions.LongRunning, TaskScheduler.Default);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过代码我们可以看到，核心定时任务包含3个，<code>StartSchedule</code>、<code>StartPublish</code>以及<code>StartClear</code>，其中<code>StartSchedule</code>负责拉取白名单任务，将所有消息压入本地消息表;<code>StartPublish</code>负责处理本地消息表的内容，该发送就发送，该重试就重试；而<code>StartClear</code>负责清理多次重试后仍然失败的消息。</p>
+<p>最后还有一个问题，我们前面说到，终端设备每次只能处理一条任务，我们是怎么控制输出流量，防止消息堵塞的呢？这在<code>InMemoryDataStore.GetMessagesOfNeedRetry</code>方法里可以看到，我们对于同一个设备，只输出第一条消息，通过不断得轮询，最终完成所有消息分发。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> IEnumerable&lt;MediumMessage&gt; <span class="title">GetMessagesOfNeedRetry</span>(<span class="params"></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> result = WhitelistMessages.Values</span><br><span class="line">        .Where(x =&gt; x.Tries &lt; MaxTryCount &amp;&amp;</span><br><span class="line">                    (x.StatusName <span class="keyword">is</span> StatusName.Scheduled <span class="keyword">or</span> StatusName.Failed ||</span><br><span class="line">                     x.StatusName == StatusName.Published &amp;&amp;</span><br><span class="line">                     x.PublishAt?.AddMilliseconds(RetryInternal) &lt;= DateTime.Now))</span><br><span class="line">        .OrderBy(t =&gt; t.AddAt)</span><br><span class="line">        .GroupBy(t =&gt; t.Topic)</span><br><span class="line">        .Select(t =&gt; t.First());</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="输出结果"><a href="#输出结果" class="headerlink" title="输出结果"></a>输出结果</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">[12:19:54 DBG] Fetched whitelist tasks from api, count:5</span><br><span class="line">[12:19:54 DBG] Publish message EditPerson-951-1494527067538440192 with topic dev/face/2042253</span><br><span class="line">[12:19:54 DBG] Publish message EditPerson-965-1494527067840430080 with topic dev/face/11111</span><br><span class="line">[12:19:55 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:19:55 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:19:55 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:55 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:55 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:55 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:56 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:56 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:56 DBG] Publish message EditPerson-951-1494527067538440192 with topic dev/face/2042253</span><br><span class="line">[12:19:56 DBG] Publish message EditPerson-965-1494527067840430080 with topic dev/face/11111</span><br><span class="line">[12:19:57 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:57 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:57 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:19:57 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:19:57 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:57 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:58 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:58 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:58 DBG] Publish message EditPerson-951-1494527067538440192 with topic dev/face/2042253</span><br><span class="line">[12:19:59 DBG] Publish message EditPerson-965-1494527067840430080 with topic dev/face/11111</span><br><span class="line">[12:19:59 INF] Mqtt message received with topic: dev/face/2042253/heartbeat</span><br><span class="line">[12:19:59 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:19:59 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:19:59 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:19:59 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:00 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:20:00 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:20:00 DBG] Skip message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:20:00 DBG] Skip message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:20:01 DBG] Publish message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:20:01 DBG] Publish message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:20:01 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:01 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:01 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:02 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:02 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:03 DBG] Publish message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:20:03 DBG] Publish message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:20:03 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:03 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:03 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:03 DBG] Cleared 2 messages</span><br><span class="line">[12:20:04 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:04 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:05 DBG] Publish message EditPerson-954-1494527067689435136 with topic dev/face/2042253</span><br><span class="line">[12:20:05 DBG] Publish message EditPerson-968-1494527068167585792 with topic dev/face/11111</span><br><span class="line">[12:20:05 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:05 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:05 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:06 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:06 DBG] Skip message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:07 DBG] Publish message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:07 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:07 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:09 DBG] Publish message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:09 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:09 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:09 DBG] Cleared 2 messages</span><br><span class="line">[12:20:11 DBG] Publish message EditPerson-957-1494527067722989568 with topic dev/face/2042253</span><br><span class="line">[12:20:11 INF] Mqtt message received with topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:11 WRN] Cannot find message handler for topic: dev/face/2042253/Ack</span><br><span class="line">[12:20:16 DBG] Cleared 1 messages</span><br><span class="line">[12:20:19 INF] Mqtt message received with topic: dev/face/2042253/heartbeat</span><br><span class="line">[12:20:19 DBG] Fetched whitelist tasks from api, count:5</span><br></pre></td></tr></table></figure>
+
+<p>我们在后台创建了包含两个设备的5个白名单任务，通过日志我们可以发现，正好是完成了一轮的任务处理。另外，实例代码不是最终代码，开发中我们仍然要根据实际情况和机器配置做好异常处理，调试轮询的时间间隔，设定每次处理的任务数量，以及论证是否要将内存数据库改为其他数据库。同时，示例中并没有标记任务成功的动作，我们是按照所有任务均执行失败的情况演示的。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2022/02/18/a-practice-for-distributed-transaction-acid-database/" data-id="ckzs2086v000098ua6eafgtmo" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET/" rel="tag">.NET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CAP/" rel="tag">CAP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-Api/" rel="tag">Web Api</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Postgresql select count性能与Vacuum</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2022/02/18/a-practice-for-distributed-transaction-acid-database/" class="title">LoT设备分布式一致性处理实践 - 本地消息表</a></p>
+              <p class="item-date"><time datetime="2022-02-18T06:49:30.000Z" itemprop="datePublished">2月 18 2022</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/06/08/develop-a-dotnet-site-installer/" class="title">开发一个dotnet core站点安装器</a></p>
+              <p class="item-date"><time datetime="2018-06-08T14:04:10.000Z" itemprop="datePublished">6月 8 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 15px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 12.5px;">C#</a> <a href="/tags/CAP/" style="font-size: 10px;">CAP</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 12.5px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 15px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 12.5px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 15px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 12.5px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 17.5px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 12.5px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 12.5px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 12.5px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
