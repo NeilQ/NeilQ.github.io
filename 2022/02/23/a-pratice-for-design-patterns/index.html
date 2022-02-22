@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>我有一把新锤子，问题当成钉子看 —— 从实践来谈设计模式 | Chen&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="相信大家都知道设计模式，很多人都能背出一些常用的设计模式，但是很少有人知道怎么去使用它。甚至有很多人觉得设计模式没有用，哪怕在很多高水平的程序员之间，面对设计模式到底是不是一种“屠龙术”也有着很激烈的争论。 今天文章主题我们不争论设计模式有没有用，而是通过一次具体问题的实践，来看看我们到底怎么去使用设计模式，怎么让一段代码演变得更有扩展性。 问题的开始我们假设这样一个场景，现在有一台物联人脸识别设">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我有一把新锤子，问题当成钉子看 —— 从实践来谈设计模式">
+<meta property="og:url" content="http://neilq.github.io/2022/02/23/a-pratice-for-design-patterns/index.html">
+<meta property="og:site_name" content="Chen&#39;s Blog">
+<meta property="og:description" content="相信大家都知道设计模式，很多人都能背出一些常用的设计模式，但是很少有人知道怎么去使用它。甚至有很多人觉得设计模式没有用，哪怕在很多高水平的程序员之间，面对设计模式到底是不是一种“屠龙术”也有着很激烈的争论。 今天文章主题我们不争论设计模式有没有用，而是通过一次具体问题的实践，来看看我们到底怎么去使用设计模式，怎么让一段代码演变得更有扩展性。 问题的开始我们假设这样一个场景，现在有一台物联人脸识别设">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-22T16:13:13.000Z">
+<meta property="article:modified_time" content="2022-02-22T16:15:13.155Z">
+<meta property="article:author" content="Chen">
+<meta property="article:tag" content=".NET">
+<meta property="article:tag" content="Web Api">
+<meta property="article:tag" content="CAP">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <!--
+  <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  -->
+  <link href='//fonts.proxy.ustclug.org/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+  <link href="//fonts.proxy.ustclug.org/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?5736229f279153ebd790af38bf6bd41e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo"></i><span class="site-title">Chen&#39;s Blog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div class="profile" id="profile-nav">
+          <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/avatar.jpg"><i class="fa fa-caret-down"></i></a>
+        </div>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+      
+        <td><a class="main-nav-link" href="/">Home</a></td>
+      
+        <td><a class="main-nav-link" href="/archives">Archives</a></td>
+      
+      <td>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="http://neilq.github.io"></form>
+      </td>
+      </tr>
+    </table>
+  </div>
+  
+</header>
+    <div class="outer">
+      <aside id="profile">
+  <div class="inner profile-inner">
+  	<div class="base-info profile-block">
+		  <img id="avatar" src="/css/images/avatar.jpg">
+      <h2 id="name">Chen</h2>
+      <h3 id="title">Web Developer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>ChangZhou, China</span>
+      <a id="follow" target="_blank" rel="noopener" href="https://github.com/NeilQ/">关注我</a>
+  	</div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        53
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        32
+        <span>标签</span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+        
+          <td><a target="_blank" rel="noopener" href="https://github.com/NeilQ" title="github"><i class="fa fa-github"></i></a></td>
+        
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+      <section id="main">
+  <article id="post-a-pratice-for-design-patterns" class="article article-single article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+       
+      
+        <header class="article-header">
+          
+  
+    <h1 class="article-title" itemprop="name">
+      我有一把新锤子，问题当成钉子看 —— 从实践来谈设计模式
+    </h1>
+  
+
+          <div class="article-meta">
+          <div class="article-date">
+  <i class="fa fa-calendar"></i>
+  <a href="/2022/02/23/a-pratice-for-design-patterns/">
+    <time datetime="2022-02-22T16:13:13.000Z" itemprop="datePublished">2月 23 2022</time>
+  </a>
+</div>
+          
+  <div class="article-category">
+  	<i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/NET/">.NET</a>
+  </div>
+
+        </div>
+        </header>
+      
+    
+      <div class="article-entry" itemprop="articleBody">
+        <p>相信大家都知道设计模式，很多人都能背出一些常用的设计模式，但是很少有人知道怎么去使用它。甚至有很多人觉得设计模式没有用，哪怕在很多高水平的程序员之间，面对设计模式到底是不是一种“屠龙术”也有着很激烈的争论。</p>
+<p>今天文章主题我们不争论设计模式有没有用，而是通过一次具体问题的实践，来看看我们到底怎么去使用设计模式，怎么让一段代码演变得更有扩展性。</p>
+<h2 id="问题的开始"><a href="#问题的开始" class="headerlink" title="问题的开始"></a>问题的开始</h2><p>我们假设这样一个场景，现在有一台物联人脸识别设备，不断地往消息队列MQTT发送消息，比如心跳包、上下线通知、人脸抓拍事件等等，我们系统要做的是：连接消息队列并监听，根据不同的消息主题及消息内容做出不同的处理。那么我们一开始的代码可能会这么写：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MqttClientService</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> IManagedMqttClient MqttClient &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="comment">// 省略消息队列连接过程</span></span><br><span class="line">        MqttClient.UseApplicationMessageReceivedHandler(HandleReceivedMessage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Task <span class="title">HandleReceivedMessage</span>(<span class="params">MqttApplicationMessageReceivedEventArgs e</span>)</span>&#123;</span><br><span class="line">        <span class="comment">// 处理消息内容</span></span><br><span class="line">	    <span class="keyword">var</span> topic = e.ApplicationMessage.Topic;</span><br><span class="line">        <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;heatbeat&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理心跳包业务</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;basic&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理上下线基础业务</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;recognize&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理人脸识别结果业务</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;snap&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理陌生人抓拍业务</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;ack&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理设备指令回复业务</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="引入策略模式"><a href="#引入策略模式" class="headerlink" title="引入策略模式"></a>引入策略模式</h2><p>我们可以看到，在最开始的代码中，我们使用简单的条件控制结构来处理业务逻辑，这样就会出现一个弊端，当我们的业务逻辑非常复杂，或者消息种类非常多的情况下，代码就会变得非常冗长，我们经常能看到一个代码文件达到几千行甚至上万行。那么这时候大家就会想到策略模式，我们就会定义一个Handler接口，并为每一种业务写一个Handler实现：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MqttMessage</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MqttMessage</span>(<span class="params"><span class="built_in">string</span> topic, <span class="built_in">string</span> message</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        Message = message;</span><br><span class="line">        Topic = topic;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Message &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Topic &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IMessageHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">Handle</span>(<span class="params">MqttMessage message</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">HeartbeatHandler</span>: <span class="title">IMessageHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">Handle</span>(<span class="params">MqttMessage message</span>)</span>&#123;</span><br><span class="line">        <span class="comment">// 处理心跳包业务</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">RecognizeHandler</span>: <span class="title">IMessageHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">Handle</span>(<span class="params">MqttMessage message</span>)</span>&#123;</span><br><span class="line">        <span class="comment">// 处理人脸识别结果业务</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这时候，我们最开始的代码会变成这样:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Task <span class="title">HandleReceivedMessage</span>(<span class="params">MqttApplicationMessageReceivedEventArgs e</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// 处理消息内容</span></span><br><span class="line">    <span class="keyword">var</span> topic = e.ApplicationMessage.Topic;</span><br><span class="line">    IMessageHandler handler;</span><br><span class="line">    <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;heatbeat&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 处理心跳包业务</span></span><br><span class="line">         handler = <span class="keyword">new</span> HeartbeatHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;basic&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 处理上下线基础业务</span></span><br><span class="line">         handler = <span class="keyword">new</span> BasicHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;recognize&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 处理人脸识别结果业务</span></span><br><span class="line">         handler = <span class="keyword">new</span> RecognizeHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;snap&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 处理陌生人抓拍业务</span></span><br><span class="line">         handler = <span class="keyword">new</span> SnapHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;ack&quot;</span>))&#123;</span><br><span class="line">        <span class="comment">// 处理设备指令回复业务</span></span><br><span class="line">         handler = <span class="keyword">new</span> AckHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    handler.Handler();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="引入工厂模式"><a href="#引入工厂模式" class="headerlink" title="引入工厂模式"></a>引入工厂模式</h2><p>到这里，大家又会发现，创建Handler的过程还是很长，并且具有明显的业务特征：它是一个生产Handler的流水线，我们可以把这一部分代码抽出来，于是就引出了简单工厂模式：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MessageHandlerFactory</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IMessageHandler <span class="title">CreateHandler</span>(<span class="params"><span class="built_in">string</span> topic</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        IMessageHandler handler;</span><br><span class="line">        <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;heatbeat&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理心跳包业务</span></span><br><span class="line">             handler = <span class="keyword">new</span> HeartbeatHandler();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;basic&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理上下线基础业务</span></span><br><span class="line">             handler = <span class="keyword">new</span> BasicHandler();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;recognize&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理人脸识别结果业务</span></span><br><span class="line">             handler = <span class="keyword">new</span> RecognizeHandler();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;snap&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理陌生人抓拍业务</span></span><br><span class="line">             handler = <span class="keyword">new</span> SnapHandler();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(topic.EndsWith(<span class="string">&quot;ack&quot;</span>))&#123;</span><br><span class="line">            <span class="comment">// 处理设备指令回复业务</span></span><br><span class="line">             handler = <span class="keyword">new</span> AckHandler();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> handler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，原来的业务代码块就成了：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">readonly</span> MessageHandlerFactory _handlerFactory = <span class="keyword">new</span> MessageHandlerFactory();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Task <span class="title">HandleReceivedMessage</span>(<span class="params">MqttApplicationMessageReceivedEventArgs e</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// 处理消息内容</span></span><br><span class="line">    <span class="keyword">var</span> topic = e.ApplicationMessage.Topic;</span><br><span class="line">    IMessageHandler handler = _handlerFactory.CreateHandler(topic);</span><br><span class="line">    handler.Handler();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="控制反转"><a href="#控制反转" class="headerlink" title="控制反转"></a>控制反转</h2><p>到这里，我在原来的代码块已经几乎看不到业务代码了，很清爽。但是问题又来了，业务代码是清爽，我们的工厂类还是不清爽啊，每次有一种新的消息类型，都要去工厂类里添加一段，不仅繁琐还不好找，万一新入职的员工找了半天都不知道在哪加怎么办呢？这设计模式用了还不如不用呢是不是？所以，我们再想一下，是不是可以根据一些特性，来动态得创建Handler呢？既然写道这里，那肯定是有办法的，这里我们以dotnet为例，通过特性+反射+IOC容器来实现动态创建。</p>
+<p>首先我们创建一个TopicEndWith特性类，来给不同的消息进行分类：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TopicEndWithAttribute</span> : <span class="title">Attribute</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TopicEndWithAttribute</span>(<span class="params"><span class="built_in">string</span> suffix</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        Suffix = suffix;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Suffix &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这里我们只创建了简单TopicEndWith特性，对于复杂一些的消息分类，我们也可以干脆正则表达式来实现，现在让把特性给Handler装上：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">TopicEndWith(<span class="meta-string">&quot;heartbeat&quot;</span>)</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">HeartbeatHandler</span>: <span class="title">IMessageHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">Handle</span>(<span class="params">MqttMessage message</span>)</span>&#123;</span><br><span class="line">        <span class="comment">// 处理心跳包业务</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着，我们再Program.cs文件里，把所有的Handler都注入到IOC容器中：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Assembly.GetAssembly(<span class="keyword">typeof</span>(Program))</span><br><span class="line">   .DefinedTypes</span><br><span class="line">   .Where(x =&gt; x.IsClass &amp;&amp; !x.IsAbstract &amp;&amp;</span><br><span class="line">               x.GetInterfaces().Any(i =&gt; i == <span class="keyword">typeof</span>(IMessageHandler)))</span><br><span class="line">   .ForEach(type =&gt; &#123; builder.Services.AddTransient(type); &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>最后，我们再改一改工厂类：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MqttMessageHandlerFactory</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IServiceProvider _serviceProvider; <span class="comment">// IOC容器工厂</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Dictionary&lt;<span class="built_in">string</span>, Type&gt; _handlerTypes = <span class="keyword">new</span>(); <span class="comment">// 缓存Handler类型</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MqttMessageHandlerFactory</span>(<span class="params">IServiceProvider serviceProvider</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        _serviceProvider = serviceProvider;</span><br><span class="line">        <span class="keyword">var</span> handlerTypeInfos = Assembly.GetAssembly(<span class="keyword">typeof</span>(Program))</span><br><span class="line">                                .DefinedTypes</span><br><span class="line">                                .Where(x =&gt; x.IsClass &amp;&amp; !x.IsAbstract &amp;&amp; </span><br><span class="line">                                          x.GetInterfaces().Any(i =&gt; i == <span class="keyword">typeof</span>(IMessageHandler)))</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">var</span> type <span class="keyword">in</span> handlerTypeInfos)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> attr = type.GetCustomAttribute&lt;TopicEndWithAttribute&gt;();</span><br><span class="line">            <span class="keyword">if</span> (attr != <span class="literal">null</span> &amp;&amp; !<span class="built_in">string</span>.IsNullOrEmpty(attr.Suffix))</span><br><span class="line">            &#123;</span><br><span class="line">                _handlerTypes.TryAdd(attr.Suffix.ToLower(), type);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IMqttMessageHandler <span class="title">CreateHandler</span>(<span class="params"><span class="built_in">string</span> topic</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> reg = <span class="keyword">new</span> Regex(<span class="string">&quot;.*face/.+/.+&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (!reg.IsMatch(topic)) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">var</span> command = topic.Split(<span class="string">&#x27;/&#x27;</span>).Last().ToLower();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!_handlerTypes.TryGetValue(command, <span class="keyword">out</span> <span class="keyword">var</span> handlerType)) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> handler = _serviceProvider.GetRequiredService(handlerType) <span class="keyword">as</span> IMessageHandler;</span><br><span class="line">        <span class="keyword">return</span> handler;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到这里我们发现，我们已经把所有的if控制结构都拿掉了，如果我们后面有新的消息类型，只需要创建一个MessageHandler，并且把TopicEndWith特性装上，就可以专注于业务代码，完全不需要改动其他代码。同时，我们可以把所有的Handler放至同一个文件夹下，不仅代码清晰，也可以防止多个人改动同一个文件造成冲突改出Bug，甚至可以安排多个人员各自开发不同的消息业务，极大提升开发效率。</p>
+<h2 id="引入代理模式"><a href="#引入代理模式" class="headerlink" title="引入代理模式"></a>引入代理模式</h2><p>然而工作并没有完成，我们上面的Handler里面提到一个AckHandler，它用来处理设备指令的统一回复，也就是说我们对设备下发的所有指令回复，都是通过这一个Handler来处理，这时我们需要解包消息内容，根据消息内容的特征(而非消息Topic的特征)来转交给其他Handler，所以我们又引出了代理模式：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IHandlerProxy</span>&#123;</span><br><span class="line">    <span class="comment">// 根据消息内容的分类创建对应的Handler并处理业务</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">DeliverHander</span>(<span class="params">MqttMessage message</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在实现Handler代理的过程中，我们发现，之前的简单工厂模式又需要演变为抽象工厂模式。由于代码类似，后面就留给大家思考。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过以上的例子，我们依次使用了策略模式、工厂模式、控制反转、代理模式，实际上真正使用到设计模式的时候，不是单一的用到其中一个两个，而是多种模式互相配合。如果我们去研究dotnet的源码，去研究开源社区一些主流的框架，会发现都是这样的混合模式，因此可见，设计模式并不是完全没有用，当我们设计通用性框架的时候仍然必不可少。但设计模式也不是“屠龙术”，作为架构师，必然是行走在钢索上的，稍有不慎，便会引来争论。最后把看到的一首打油诗送给大家共勉。</p>
+<p>我有一把新锤子，问题当成钉子看。<br>我刚学了屠龙术，猫狗当成龙来宰。</p>
+
+      </div>
+      <footer class="article-footer">
+        <a data-url="http://neilq.github.io/2022/02/23/a-pratice-for-design-patterns/" data-id="ckzybxq2e00002wua0tzb31p3" class="article-share-link">分享到</a>
+        
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET/" rel="tag">.NET</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CAP/" rel="tag">CAP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web-Api/" rel="tag">Web Api</a></li></ul>
+
+      </footer>
+    </div>
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/02/18/a-practice-for-distributed-transaction-acid-database/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">LoT设备分布式一致性处理实践 - 本地消息表</div>
+    </a>
+  
+</nav>
+
+  </article>
+  
+
+ 
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul id="recent-post" class="no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2022/02/23/a-pratice-for-design-patterns/" class="title">我有一把新锤子，问题当成钉子看 —— 从实践来谈设计模式</a></p>
+              <p class="item-date"><time datetime="2022-02-22T16:13:13.000Z" itemprop="datePublished">2月 23 2022</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/NET/">.NET</a></p>
+              <p class="item-title"><a href="/2022/02/18/a-practice-for-distributed-transaction-acid-database/" class="title">LoT设备分布式一致性处理实践 - 本地消息表</a></p>
+              <p class="item-date"><time datetime="2022-02-18T06:49:30.000Z" itemprop="datePublished">2月 18 2022</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/DataBase/">DataBase</a></p>
+              <p class="item-title"><a href="/2021/07/29/postgresql-select-count-performance-and-vacuum/" class="title">Postgresql select count性能与Vacuum</a></p>
+              <p class="item-date"><time datetime="2021-07-29T07:37:18.000Z" itemprop="datePublished">7月 29 2021</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2019/01/11/how-to-set-snake-case-for-query-string-at-asp-net-core-2/" class="title">Asp.net core 2 如何设置SnakeCase形式的QueryString参数</a></p>
+              <p class="item-date"><time datetime="2019-01-11T14:47:57.000Z" itemprop="datePublished">1月 11 2019</time></p>
+            </div>
+          </li>
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category"><a class="article-category-link" href="/categories/dotnetcore/">dotnetcore</a></p>
+              <p class="item-title"><a href="/2018/07/14/secure-your-asp-net-core-2-1-api-1-issuing-a-JWT/" class="title">ASP.NET core 2.1 API 认证与授权(1 - 使用JWT)</a></p>
+              <p class="item-date"><time datetime="2018-07-14T06:06:14.000Z" itemprop="datePublished">7月 14 2018</time></p>
+            </div>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/NET/" style="font-size: 20px;">.NET</a> <a href="/tags/AOP/" style="font-size: 14px;">AOP</a> <a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/C/" style="font-size: 12px;">C#</a> <a href="/tags/CAP/" style="font-size: 12px;">CAP</a> <a href="/tags/CI/" style="font-size: 10px;">CI</a> <a href="/tags/Help-Pages/" style="font-size: 10px;">Help Pages</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySql/" style="font-size: 12px;">MySql</a> <a href="/tags/Restful/" style="font-size: 10px;">Restful</a> <a href="/tags/Unit-Test/" style="font-size: 10px;">Unit Test</a> <a href="/tags/Unity/" style="font-size: 14px;">Unity</a> <a href="/tags/WCF/" style="font-size: 10px;">WCF</a> <a href="/tags/WPF/" style="font-size: 12px;">WPF</a> <a href="/tags/Web-Api/" style="font-size: 16px;">Web Api</a> <a href="/tags/cake-build/" style="font-size: 10px;">cake-build</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/docker/" style="font-size: 12px;">docker</a> <a href="/tags/dotnetcore/" style="font-size: 18px;">dotnetcore</a> <a href="/tags/electron/" style="font-size: 10px;">electron</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/gitlab/" style="font-size: 10px;">gitlab</a> <a href="/tags/linux/" style="font-size: 12px;">linux</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a> <a href="/tags/postgresql/" style="font-size: 10px;">postgresql</a> <a href="/tags/tmux/" style="font-size: 10px;">tmux</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/web-api/" style="font-size: 10px;">web api</a> <a href="/tags/webhook/" style="font-size: 10px;">webhook</a> <a href="/tags/%E6%B5%8B%E8%AF%95/" style="font-size: 12px;">测试</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/" style="font-size: 12px;">自动化测试</a> <a href="/tags/%E8%A1%A8%E5%80%BC%E5%8F%82%E6%95%B0/" style="font-size: 10px;">表值参数</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/NET/">.NET</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/DataBase/">DataBase</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/dotnetcore/">dotnetcore</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%9D%82%E8%B0%88/">杂谈</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a target="_blank" rel="noopener" href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+<script src="//cdn.bootcss.com/jquery/2.0.3/jquery.min.js"></script>
+<!--
+<script src="//ajax.useso.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+-->
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  </div>
+</body>
+</html>
